@@ -113,6 +113,20 @@ Next step: I'll drop to plan mode and propose the implementation plan against cu
 
 After the brief is rendered, enter plan mode and draft the implementation plan. The brief is the foundation; the plan is what gets executed today.
 
+### 7. After plan-mode approval — optional: post a build log
+
+If the maintainer opts in (or this is a habit in the project), post the brief plus the approved plan as a single comment on the issue:
+
+```bash
+gh issue comment N --body-file - <<'EOF'
+[brief content + plan steps]
+EOF
+```
+
+The pattern: issue body stays thin (no procedural rot per the antipattern in `antipatterns.md`); the comment captures a per-execution snapshot — what was in play, what we planned, dated. Future-you opening the issue after a long absence sees the actual build log instead of having to reconstruct it. Jeff Geerling does this on his own homelab repos and it's a nice habit.
+
+This step is off by default. Worth offering at end-of-plan-mode if you don't know whether the maintainer wants it for this project. Skip without ceremony if they don't.
+
 ## When NOT to run this
 
 - Quick fixes or 5-minute tasks (the brief overhead exceeds the value)
