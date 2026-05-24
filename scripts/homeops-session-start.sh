@@ -26,17 +26,39 @@ if [ -d "$PENDING_ADR_DIR" ]; then
   fi
 fi
 
-# Audit staleness
+# Audit staleness.
+# Threshold defaults to 90 days but can be overridden via .working-memoryrc
+# (key: AUDIT_STALENESS_DAYS).
+STALENESS_DAYS="${WORKING_MEMORY_AUDIT_STALENESS_DAYS:-90}"
+if [ -f "$REPO_ROOT/.working-memoryrc" ]; then
+  cfg_val=$(grep -E '^AUDIT_STALENESS_DAYS=' "$REPO_ROOT/.working-memoryrc" 2>/dev/null | head -1 | cut -d= -f2- | tr -d ' "'"'"'')
+  [ -n "$cfg_val" ] && STALENESS_DAYS="$cfg_val"
+fi
+
 AUDIT_FILE="$REPO_ROOT/_working-memory/.last-audit"
+FALLBACK_FILE="$REPO_ROOT/_working-memory/conventions.md"
+
+# If .last-audit exists, age it. Otherwise fall back to conventions.md mtime
+# (proxy for "when did this project's discipline get set up"). This way the
+# clock starts ticking from install, not from the first manual audit.
+reference_file=""
 if [ -f "$AUDIT_FILE" ]; then
-  last_ts=$(stat -f %m "$AUDIT_FILE" 2>/dev/null || stat -c %Y "$AUDIT_FILE" 2>/dev/null || echo 0)
+  reference_file="$AUDIT_FILE"
+elif [ -f "$FALLBACK_FILE" ]; then
+  reference_file="$FALLBACK_FILE"
+fi
+
+if [ -n "$reference_file" ]; then
+  last_ts=$(stat -f %m "$reference_file" 2>/dev/null || stat -c %Y "$reference_file" 2>/dev/null || echo 0)
   now_ts=$(date +%s)
   days=$(( (now_ts - last_ts) / 86400 ))
-  if [ "$days" -gt 90 ]; then
-    PARTS+=("⚠️ Discipline audit overdue (${days} days since last).")
+  if [ "$days" -gt "$STALENESS_DAYS" ]; then
+    if [ "$reference_file" = "$AUDIT_FILE" ]; then
+      PARTS+=("⚠️ Discipline audit overdue (${days} days since last). Run \`bash scripts/run-audit.sh\` or ask me to.")
+    else
+      PARTS+=("⚠️ No discipline audit on record; conventions.md is ${days} days old. Run \`bash scripts/run-audit.sh\` or ask me to.")
+    fi
   fi
-elif [ -f "$REPO_ROOT/_working-memory/conventions.md" ]; then
-  PARTS+=("ℹ️ No discipline audit recorded yet — quarterly schedule recommended.")
 fi
 
 if [ "${#PARTS[@]}" -gt 0 ]; then

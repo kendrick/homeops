@@ -34,6 +34,18 @@
 
 ---
 
+## 2026-05-23 — Don't trust `core.hooksPath` to survive `rm -rf .git`
+
+**Tried:** Pre-push PII hook wired via `git config core.hooksPath scripts/git-hooks`. Then Phase E did `rm -rf .git && git init` for the clean-history repo recreate. First push to the new public repo went through with no hook firing.
+
+**What broke:** `core.hooksPath` lives in `.git/config`. Re-init wipes the config. The hook script was still on disk and executable, but the new `.git/config` had no `core.hooksPath` setting, so git defaulted to `.git/hooks/` (which is empty after init). Push gate was silently absent.
+
+**Why we backed out:** Caught only because the user noticed the hook didn't fire and asked. Tracked content was already verified PII-clean pre-push (lucky), so nothing leaked. If content had been dirty, it would have shipped to a public repo with no warning.
+
+**Don't suggest:** Relying on `core.hooksPath` (or any `.git/config` setting) to persist across `git init` / re-init / clone. After any fresh init: immediately run `git config core.hooksPath scripts/git-hooks` (already in `conventions.md` as `required`). For Phase-E-style recreates specifically, the recreate command sequence must include the `git config` line as a non-optional step, not as a follow-up.
+
+---
+
 ## 2026-05-23 — Don't pair Forgejo + Claude Code on a single shared LXC
 
 **Tried:** A shared `docker01` LXC was proposed to host both Forgejo (with Docker + Postgres) and Claude Code under one roof, on Tailscale.
