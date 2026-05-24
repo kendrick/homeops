@@ -34,6 +34,18 @@
 
 ---
 
+## 2026-05-24 — Don't propose Asus ROG Rapture (or AsusWRT-based gaming routers) for homelab routing
+
+**Tried:** Considered the Asus ROG Rapture line (GT-AX / GT-BE series, $400-1000+) as an alternative to the GL.iNet Flint 2 ($180) for the CRAWL router slot per ADR-003 (VLAN segmentation) and ADR-008 (Tailscale).
+
+**What broke:** ROG Rapture is built for gaming-grade WiFi prioritization, not homelab use. Stock AsusWRT has shallow VLAN support (mostly a single "guest network" toggle); real VLAN segmentation needs Merlin firmware plus CLI work. No built-in Tailscale; Asus would push that onto a separate device. AdGuard-style filtering also needs Merlin. The premium is $200-800+ over Flint 2 for WiFi performance the homelab use case doesn't actually need.
+
+**Why we backed out:** Flint 2 has native VLAN UI that matches ADR-003, built-in Tailscale that matches ADR-008, built-in AdGuard Home, OpenWrt firmware (the lingua franca of homelab routers), and costs less than half. ROG Rapture's wins (WiFi range, gaming QoS, polished mobile app) don't intersect with what CRAWL needs.
+
+**Don't suggest:** Asus ROG Rapture or any AsusWRT-based gaming router as a router replacement in this project. If WiFi performance turns into a real problem later, the answer is "add a UniFi AP" not "swap to a gaming router." If routing/firewall capability becomes the bottleneck, the answer is "graduate to Mikrotik RB5009 or Protectli + OPNsense" not Asus.
+
+---
+
 ## 2026-05-23 — Don't trust `core.hooksPath` to survive `rm -rf .git`
 
 **Tried:** Pre-push PII hook wired via `git config core.hooksPath scripts/git-hooks`. Then Phase E did `rm -rf .git && git init` for the clean-history repo recreate. First push to the new public repo went through with no hook firing.
