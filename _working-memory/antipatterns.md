@@ -67,3 +67,31 @@
 **Why we backed out:** Separated into CT 100 (Forgejo, native LXC, git-host-only) and CT 101 (Claude Code dev, native LXC, agent work only). Cheap on Proxmox; clean separation of concerns. See ADR-010.
 
 **Don't suggest:** Co-tenanting AI agents with primary data stores on a single container, even on a "trusted" homelab network.
+
+---
+
+## 2026-05-25 — Don't host homeops on a Mac (Studio or otherwise)
+
+**Tried:** Considered running the homelab stack (Proxmox, HA OS, Forgejo, Claude Code dev, future Jellyfin / Immich / Paperless) on an Apple Silicon Mac Studio instead of the Intel mini-ITX PC, motivated by the maintainer preferring Macs elsewhere.
+
+**What broke:**
+
+- HA OS has no clean Apple Silicon installation path. The standard recommendation remains "HA OS in a VM on Linux/Proxmox." HA Container on macOS via OrbStack/Colima works but loses add-on support; HA Core direct on macOS is unsupported and breaks on every release.
+- Proxmox doesn't run on Apple Silicon. Proxmox is Debian + KVM on x86. Asahi Linux exists for Apple Silicon but isn't a Proxmox target.
+- LXC isn't a thing on macOS. Going all-Mac forces a Docker-everywhere architecture, retroactively killing ADR-009 (native LXC over Docker).
+- macOS power management fights homelab uptime. Sleep behavior, forced reboots for OS updates, energy-saver background-process suspension — all designed for a workstation, not a 24/7 service host.
+- ARM-only image availability is patchy. Some homelab Docker images don't have ARM builds; others are flaky.
+- Cost: a comparable-spec Mac Studio is several multiples of a refreshed mini-ITX PC or mini-PC.
+
+**Why we backed out:** The Mac is a great workstation and a great Apple-ecosystem appliance. It is not a Linux container host. Forcing it into that role requires retconning every architectural decision we've made (LXC-native per ADR-009, HA OS in VM per ADR-001 + CRAWL-05, Proxmox as hypervisor) and fighting macOS at every turn.
+
+**Don't suggest:**
+
+- Hosting Proxmox, HA OS, or the LXC-based homelab services on a Mac (any model).
+- Replacing the Intel PC with a Mac as the primary homelab host.
+- Reaching for OrbStack / Colima / Docker Desktop on macOS as the homelab foundation.
+
+**What IS reasonable** (not an antipattern, just out of scope for this entry):
+
+- The Mac stays the maintainer's workstation (Claude Code, SSH, browsers, IDE).
+- A Mac mini as a complementary Apple-ecosystem appliance alongside the PC homelab — HomeKit Home Hub workloads, native iCloud Photos export, Plex Server with Apple Silicon performance, Apple TV automation helpers. Two-box pattern, not replacement. Worth considering at WALK or RUN, not CRAWL.
