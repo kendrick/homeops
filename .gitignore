@@ -1,0 +1,134 @@
+###############################################################################
+# OS / Editor noise
+###############################################################################
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+###############################################################################
+# Secrets (never commit)
+###############################################################################
+.env
+.env.*
+!.env.example
+
+secrets.yaml
+secrets.yml
+**/secrets.yaml
+**/secrets.yml
+
+*.key
+*.pem
+*.crt
+*.pfx
+*.p12
+
+*.age
+*.sops.*
+
+###############################################################################
+# Home Assistant
+###############################################################################
+# Runtime state
+home-assistant/.storage/
+home-assistant/.cloud/
+home-assistant/.HA_VERSION
+home-assistant/home-assistant.log*
+home-assistant/tts/
+
+# Backups & snapshots
+home-assistant/backups/
+home-assistant/*.tar
+home-assistant/*.tar.gz
+
+# DBs
+home-assistant/*.db
+home-assistant/*.db-shm
+home-assistant/*.db-wal
+
+###############################################################################
+# Docker / Containers
+###############################################################################
+**/docker-data/
+**/data/
+**/volumes/
+**/mnt/
+
+docker-compose.override.yml
+
+###############################################################################
+# Kubernetes / k3s / Talos
+###############################################################################
+**/.kube/
+**/kubeconfig
+**/*.kubeconfig
+
+###############################################################################
+# Terraform / IaC
+###############################################################################
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+terraform.tfvars.json
+
+###############################################################################
+# Ansible
+###############################################################################
+*.retry
+ansible.cfg
+
+###############################################################################
+# Logs
+###############################################################################
+logs/
+**/*.log
+
+###############################################################################
+# Backups / Dumps
+###############################################################################
+**/backup/
+**/backups/
+**/*.bak
+**/*.dump
+**/*.sql
+
+###############################################################################
+# Language / Tooling (just in case)
+###############################################################################
+node_modules/
+dist/
+build/
+.cache/
+venv/
+__pycache__/
+*.pyc
+
+###############################################################################
+# Scratch / Local experiments
+###############################################################################
+scratch/
+tmp/
+.local/
+
+# Local-only active context (working-memory-kit)
+_working-memory/activeContext.md
+
+# working-memory staging (homeops auto-fire infrastructure)
+_working-memory/.pending-actions
+_working-memory/.pending-adrs/
+_working-memory/.last-audit
+
+# Local-only PII pattern list (audit-pii.sh reads this, never commit)
+.audit-pii-patterns
+
+# Local-only Claude Code settings (per-machine permissions)
+.claude/settings.local.json

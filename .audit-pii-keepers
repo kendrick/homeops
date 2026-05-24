@@ -1,0 +1,29 @@
+# audit-pii keepers — committed, public-safe.
+#
+# Lines matching any pattern in this file are filtered OUT of audit results
+# (treated as false positives). These describe the SHAPE of safe contexts —
+# generic substrings only, no real names or identifying strings.
+#
+# Format: one ERE regex per line. Blank lines and # comments ignored.
+
+# Room name "family room" — a conventional room type label, not family-attributing
+family room
+
+# Entity ID naming convention for the family-room fixture (e.g. light.first_family_*)
+first_family
+
+# Generic "owner's bedroom" naming
+first_owner_bedroom
+
+# Date-range token that looks like an age range to the regex
+Week 8-10
+
+# New persona anchor slugs (post-scrub) — these are the *replacement* anchors
+persona-household
+persona-maintainer
+persona-guests
+
+# Files allowed to legitimately reference rejected patterns
+antipatterns\.md
+\.audit-pii-keepers
+\.audit-pii-patterns\.example

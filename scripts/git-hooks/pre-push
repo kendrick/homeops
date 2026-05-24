@@ -1,0 +1,18 @@
+#!/bin/bash
+# pre-push: hard-block pushes that contain family-identifying content.
+# Delegates to scripts/audit-pii.sh for the actual sweep.
+# Bypass for confirmed false positives: git push --no-verify
+
+set -eu
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+if ! bash "$REPO_ROOT/scripts/audit-pii.sh"; then
+  echo ""
+  echo "❌ pre-push BLOCKED: PII candidates detected (see above)."
+  echo "   Scrub the matches and re-push."
+  echo "   To override (only after confirming false positive): git push --no-verify"
+  exit 1
+fi
+
+echo "✓ pre-push: PII sweep clean"
+exit 0

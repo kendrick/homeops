@@ -1,0 +1,34 @@
+# audit-pii patterns — local-only template.
+#
+# Copy this file to .audit-pii-patterns (which is gitignored) and add the
+# tokens you don't want leaking to a public repo. The script reads it before
+# every git push and blocks if any match is found anywhere in the tree.
+#
+# Bootstrap:
+#   cp .audit-pii-patterns.example .audit-pii-patterns
+#   $EDITOR .audit-pii-patterns
+#
+# Format:
+#   - One ERE regex per line (egrep / grep -E syntax)
+#   - Blank lines and lines starting with # are ignored
+#   - Pattern matching is case-insensitive
+#   - Use \b for word boundaries to avoid sub-string false positives
+#     (e.g. \bwife\b won't match "wifeless")
+#
+# Suggested categories:
+#   - First names of household members / family / collaborators you want kept private
+#   - Family-relationship words you treat as identifying (wife, spouse, kids, child)
+#   - Specific locations (street addresses, neighborhoods narrower than city)
+#   - Account handles you keep separate from this repo
+#   - Old persona anchor slugs you've since renamed
+#
+# Examples (DELETE THESE — they're illustrative only):
+# \bspouse_first_name\b
+# \bchild_first_name\b
+# \bwife\b
+# \bkids?\b
+# \bchild\b
+# WAF
+# \bhomeschool\b
+# 123\s+main\s+st
+# my-handle-on-other-platforms
