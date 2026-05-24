@@ -49,6 +49,7 @@ Before creating any new file, consult this table. If the file's purpose doesn't 
 | Auto-fire script                                             | `scripts/`                                                                                                                       |
 | Git hook                                                     | `scripts/git-hooks/`                                                                                                             |
 | Cross-session memory (user profile, project state, feedback) | `~/.claude/projects/-Users-karnett-repos-homeops/memory/` (NOT in repo)                                                          |
+| Session-ritual skill (slash command for a recurring workflow) | `.claude/skills/<name>/SKILL.md` (e.g. `/start-issue` lives at `.claude/skills/start-issue/SKILL.md`)                            |
 | Anything sensitive (real names, real IPs, lock codes, photos) | NOT in this repo — local-only or a private companion repo                                                                       |
 
 ### Updating working memory:
