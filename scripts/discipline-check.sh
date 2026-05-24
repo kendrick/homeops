@@ -14,7 +14,7 @@ TMP="$PENDING.tmp"
 
 # Drift 1: decisions.md changed in last 5 commits but decisionLog.md didn't
 if git -C "$REPO_ROOT" log -5 --name-only --pretty=format: 2>/dev/null \
-     | grep -q "home-assistant/docs/decisions.md"; then
+     | grep -q "docs/decisions.md"; then
   if ! git -C "$REPO_ROOT" log -5 --name-only --pretty=format: 2>/dev/null \
        | grep -q "_working-memory/decisionLog.md"; then
     echo "📝 decisions.md changed recently but decisionLog.md wasn't regenerated. Run scripts/regen-decision-log.sh." >> "$TMP"
@@ -25,7 +25,7 @@ fi
 if git -C "$REPO_ROOT" log -5 --pretty=format:%s 2>/dev/null \
      | grep -iE '(install|deploy|configure).*(switch|sensor|coordinator|router|VM|LXC|lock|forgejo|tailscale|proxmox)' >/dev/null; then
   if ! git -C "$REPO_ROOT" log -5 --name-only --pretty=format: 2>/dev/null \
-       | grep -q "home-assistant/docs/inventory.md"; then
+       | grep -q "docs/inventory.md"; then
     echo "📋 Recent commits look like infra changes but inventory.md wasn't updated." >> "$TMP"
   fi
 fi

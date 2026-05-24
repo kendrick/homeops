@@ -14,7 +14,7 @@ bash "$REPO_ROOT/scripts/discipline-check.sh" 2>/dev/null || true
 # If decisions.md changed in last 5 commits, auto-regenerate decisionLog
 # (idempotent — safe to run even if log is already current)
 if git -C "$REPO_ROOT" log -5 --name-only --pretty=format: 2>/dev/null \
-     | grep -q "home-assistant/docs/decisions.md"; then
+     | grep -q "docs/decisions.md"; then
   bash "$REPO_ROOT/scripts/regen-decision-log.sh" >/dev/null 2>&1 || true
 fi
 

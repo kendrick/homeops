@@ -23,7 +23,7 @@ This project uses a two-tier working memory at `_working-memory/`.
 | File                   | Read when...                                                                                                      |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `projectOverview.md`   | Starting a new feature or onboarding                                                                              |
-| `decisionLog.md`       | Quick chronological index of decisions (auto-generated from `home-assistant/docs/decisions.md` frontmatter)        |
+| `decisionLog.md`       | Quick chronological index of decisions (auto-generated from `docs/decisions.md` frontmatter)        |
 | `networkContracts.md`  | Touching entity naming, VLAN/IP assignments, or device-protocol selection                                          |
 | `conventions.md`       | Writing new code/config or reviewing patterns (PolicyRule rows with required/recommended/advisory)                |
 | `openQuestions.md`     | Encountering ambiguity — check here before guessing                                                               |

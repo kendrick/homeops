@@ -13,7 +13,7 @@
 - `required` — **No `git commit` by automated agents.** Stage + propose message + pause for human. _Why: maintainer retains final review/authorship of every commit._
 - `required` — **Closing an issue that adds infrastructure → update `inventory.md` in the same commit.** Definition of done; the `Stop` hook flags drift. _Why: inventory is the durable snapshot of reality; commits without inventory churn cause silent rot._
 - `required` — **Making an architectural choice in-session → write/draft an ADR before merging the work.** The `Stop` hook drafts where possible; the human approves. _Why: choices made in chat without ADRs become tribal knowledge that future sessions can't reason over._
-- `required` — **Touching `home-assistant/docs/decisions.md` → regenerate `_working-memory/decisionLog.md` in the same commit.** The `Stop` hook does this automatically; if you edit ADRs by hand, run `scripts/regen-decision-log.sh`. _Why: the log is derived; double-maintenance is a known anti-pattern._
+- `required` — **Touching `docs/decisions.md` → regenerate `_working-memory/decisionLog.md` in the same commit.** The `Stop` hook does this automatically; if you edit ADRs by hand, run `scripts/regen-decision-log.sh`. _Why: the log is derived; double-maintenance is a known anti-pattern._
 
 ## Architecture defaults
 
