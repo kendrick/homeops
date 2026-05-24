@@ -38,11 +38,11 @@ Self-hosted, privacy-first, manual-overrides-always-work.
 
 ## Project phases
 
-| Phase | Focus                            | Budget    | Status  |
-| ----- | -------------------------------- | --------- | ------- |
+| Phase | Focus                                | Budget    | Status  |
+| ----- | ------------------------------------ | --------- | ------- |
 | CRAWL | Lighting, locks, network, foundation | $1.5-2.5k | Active  |
-| WALK  | Sensors, climate, irrigation     | ~$1k      | Planned |
-| RUN   | Presence, blinds, UI polish      | $2-5k     | Planned |
+| WALK  | Sensors, climate, irrigation         | ~$1k      | Planned |
+| RUN   | Presence, blinds, UI polish          | $2-5k     | Planned |
 
 ## Repository layout
 
