@@ -1,20 +1,18 @@
+```
+██╗  ██╗ ██████╗ ███╗   ███╗███████╗ ██████╗ ██████╗ ███████╗
+██║  ██║██╔═══██╗████╗ ████║██╔════╝██╔═══██╗██╔══██╗██╔════╝
+███████║██║   ██║██╔████╔██║█████╗  ██║   ██║██████╔╝███████╗
+██╔══██║██║   ██║██║╚██╔╝██║██╔══╝  ██║   ██║██╔═══╝ ╚════██║
+██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗╚██████╔╝██║     ███████║
+╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝     ╚══════╝
+
+```
+
 # homeops
 
-An 18-month project to build a self-hosted smart home on top of a Proxmox
-homelab. Home Assistant is the brain. Apple Home is the household interface.
-The homelab also hosts Forgejo for self-hosted git and a dedicated dev LXC
-for running Claude Code off-laptop.
+A self-hosted smart home on top of a Proxmox homelab. Home Assistant is the brain; Apple Home is the household interface. The homelab also hosts Forgejo for self-hosted git and a dedicated dev LXC for running Claude Code.
 
-Self-hosted, privacy-first, manual-overrides-always-work.
-
-## Quick context
-
-- Location: Fort Worth, TX
-- Owner: technical DIYer, UX professional, working from home
-- Current phase: CRAWL (months 0-3)
-- Host: Proxmox VE on an Intel i5-11400 / 16GB box
-- Public repo (this one) for architecture and documentation; real device
-  data (entity names, codes, photos) stays out of git
+Self-hosted, privacy-first.
 
 ## Tech stack
 
@@ -38,11 +36,11 @@ Self-hosted, privacy-first, manual-overrides-always-work.
 
 ## Project phases
 
-| Phase | Focus                                | Budget    | Status  |
-| ----- | ------------------------------------ | --------- | ------- |
-| CRAWL | Lighting, locks, network, foundation | $1.5-2.5k | Active  |
-| WALK  | Sensors, climate, irrigation         | ~$1k      | Planned |
-| RUN   | Presence, blinds, UI polish          | $2-5k     | Planned |
+| Phase | Focus                                | Status  |
+| ----- | ------------------------------------ | ------- |
+| CRAWL | Lighting, locks, network, foundation | Active  |
+| WALK  | Sensors, climate, irrigation         | Planned |
+| RUN   | Presence, blinds, UI polish          | Planned |
 
 ## Repository layout
 
@@ -67,12 +65,9 @@ Self-hosted, privacy-first, manual-overrides-always-work.
 
 ## For AI agents
 
-The canonical entry point is `AGENTS.md` at the repo root. It contains the
-on-demand routing table for `_working-memory/`. Read `_working-memory/activeContext.md`
-at session start; read other working-memory files when the table directs you to.
+The canonical entry point is `AGENTS.md` at the repo root. It contains the on-demand routing table for `_working-memory/`. Read `_working-memory/activeContext.md` at session start; read other working-memory files when the table directs you to.
 
-For HA-config-specific sessions (editing automations, dashboards, YAML),
-the additional instructions at `home-assistant/CLAUDE.md` apply.
+For HA-config-specific sessions (editing automations, dashboards, YAML), the additional instructions at `home-assistant/CLAUDE.md` apply.
 
 ## License
 
