@@ -18,6 +18,11 @@ if git -C "$REPO_ROOT" log -5 --name-only --pretty=format: 2>/dev/null \
   bash "$REPO_ROOT/scripts/regen-decision-log.sh" >/dev/null 2>&1 || true
 fi
 
+# Refresh the Obsidian vault mirror so the phone stays current.
+# Always-on (idempotent + fast); rsync only copies changed files. Silent if
+# the vault doesn't exist (e.g., on a machine without Obsidian).
+bash "$REPO_ROOT/scripts/sync-to-vault.sh" >/dev/null 2>&1 || true
+
 # Emit pending actions as systemMessage if any
 PENDING="$REPO_ROOT/_working-memory/.pending-actions"
 if [ -s "$PENDING" ]; then

@@ -14,6 +14,7 @@
 - `required` — **Closing an issue that adds infrastructure → update `inventory.md` in the same commit.** Definition of done; the `Stop` hook flags drift. _Why: inventory is the durable snapshot of reality; commits without inventory churn cause silent rot._
 - `required` — **Making an architectural choice in-session → write/draft an ADR before merging the work.** The `Stop` hook drafts where possible; the human approves. _Why: choices made in chat without ADRs become tribal knowledge that future sessions can't reason over._
 - `required` — **Touching `docs/decisions.md` → regenerate `_working-memory/decisionLog.md` in the same commit.** The `Stop` hook does this automatically; if you edit ADRs by hand, run `scripts/regen-decision-log.sh`. _Why: the log is derived; double-maintenance is a known anti-pattern._
+- `required` — **PII-rich planning and household specifics live in the Obsidian vault, never in the repo as-is.** Specific vault paths are configured in `.env` (`HOMEOPS_VAULT_ROOT` + `HOMEOPS_VAULT_RAW_SUBPATH`); `scripts/lib/vault-config.sh` resolves them. Claude abstracts vault-raw content to sanitized form before any change lands in the tracked tree. _Why: the repo is public; the vault is iCloud-personal. The pre-push PII hook is the final safety net but should never be the primary one._
 
 ## Architecture defaults
 
@@ -28,5 +29,15 @@
 - `recommended` — **New automation tested in notification-only mode for ≥48h before action-enabled.** Replace `service:` with `notify.mobile_app_*` until you've watched it fire correctly under realistic conditions. _Why: false-positive automations erode HAF fast._
 - `recommended` — **Parallelize independent work via batched tool calls or background agents.** Don't serialize obviously-independent edits. _Why: throughput; user explicit preference._
 - `recommended` — **Before creating any new file, consult the placement table in `AGENTS.md` (under "Where new content goes").** If the file's purpose doesn't match a row, ask before writing rather than guessing a location. _Why: the `home-assistant/` subdirectory drifted into a misnomer because nobody asked "is this still the right home?" at write time; the placement table is the write-time forcing function that prevents recurrence._
+- `recommended` — **The vault's `30.03 Homelab/homeops/` is a bidirectional mirror of repo content.** Edits made there (Mac or phone via iCloud) survive via `scripts/sync-from-vault.sh`, surfaced by the SessionStart hook. The Stop hook auto-pushes repo → vault. Don't edit both sides of the mirror between syncs to avoid clobbering. _Why: bidirectional sync between iCloud and git doesn't "just happen"; explicit-direction scripts plus hook-assisted surfacing is the workable middle ground for an iCloud-Obsidian + git setup._
+- `recommended` — **Use the "abstract from vault" prompt below to lift raw thinking from `30.03 Homelab/_raw/` into the repo.** Start as a prompt pattern; promote to a slash skill at `.claude/skills/abstract-from-vault/SKILL.md` if it becomes a weekly ritual. _Why: don't build the skill before the habit; defer the abstraction-machinery cost until proven needed._
 - `advisory` — **Entity naming follows `{domain}.{floor}_{room}_{fixture}`** (e.g., `light.second_bedroom_2_ceiling`). See `networkContracts.md` for the full convention.
 - `advisory` — **Snapshot before HA OS or LXC service upgrades.** Proxmox snapshots are instant; rollback is free.
+
+## Prompts
+
+### Abstract from vault
+
+Use this prompt verbatim (or its spiritual equivalent) when you want raw vault thinking lifted into the repo as sanitized content:
+
+> Source `scripts/lib/vault-config.sh` to resolve `$VAULT_RAW_FULL` — that's the path to the maintainer's raw-thinking directory. Read recent files there. For anything not yet reflected in the repo, propose abstracted updates to the relevant docs (`docs/prd.md`, `docs/decisions.md`, `docs/inventory.md`, `docs/phases/*.md`, `_working-memory/openQuestions.md`, `_working-memory/antipatterns.md`). Strip PII per the conventions (family names, addresses, specific schedules). Show me a diff before any commit. Don't touch the `_raw/` files themselves; that's my surface.

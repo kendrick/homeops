@@ -50,7 +50,8 @@ Before creating any new file, consult this table. If the file's purpose doesn't 
 | Git hook                                                     | `scripts/git-hooks/`                                                                                                             |
 | Cross-session memory (user profile, project state, feedback) | `~/.claude/projects/-Users-karnett-repos-homeops/memory/` (NOT in repo)                                                          |
 | Session-ritual skill (slash command for a recurring workflow) | `.claude/skills/<name>/SKILL.md` (e.g. `/start-issue` lives at `.claude/skills/start-issue/SKILL.md`)                            |
-| Anything sensitive (real names, real IPs, lock codes, photos) | NOT in this repo — local-only or a private companion repo                                                                       |
+| Raw, PII-rich planning / household specifics / brainstorming | Obsidian vault `_raw/` dir; path configured in `.working-memoryrc` and resolved by `scripts/lib/vault-config.sh` (NOT in this repo) |
+| Anything sensitive (real names, real IPs, lock codes, photos) | NOT in this repo — Obsidian vault `_raw/` (above) or a private companion repo                                                  |
 
 ### Updating working memory:
 

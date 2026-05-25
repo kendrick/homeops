@@ -27,11 +27,11 @@ if [ -d "$PENDING_ADR_DIR" ]; then
 fi
 
 # Audit staleness.
-# Threshold defaults to 90 days but can be overridden via .working-memoryrc
+# Threshold defaults to 90 days but can be overridden via .env
 # (key: AUDIT_STALENESS_DAYS).
 STALENESS_DAYS="${WORKING_MEMORY_AUDIT_STALENESS_DAYS:-90}"
-if [ -f "$REPO_ROOT/.working-memoryrc" ]; then
-  cfg_val=$(grep -E '^AUDIT_STALENESS_DAYS=' "$REPO_ROOT/.working-memoryrc" 2>/dev/null | head -1 | cut -d= -f2- | tr -d ' "'"'"'')
+if [ -f "$REPO_ROOT/.env" ]; then
+  cfg_val=$(grep -E '^AUDIT_STALENESS_DAYS=' "$REPO_ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d ' "'"'"'')
   [ -n "$cfg_val" ] && STALENESS_DAYS="$cfg_val"
 fi
 
@@ -57,6 +57,24 @@ if [ -n "$reference_file" ]; then
       PARTS+=("⚠️ Discipline audit overdue (${days} days since last). Run \`bash scripts/run-audit.sh\` or ask me to.")
     else
       PARTS+=("⚠️ No discipline audit on record; conventions.md is ${days} days old. Run \`bash scripts/run-audit.sh\` or ask me to.")
+    fi
+  fi
+fi
+
+# Vault mirror delta detection.
+# If any .md file in the vault mirror is newer than the .last-sync marker,
+# the user edited it in Obsidian after the last push. Surface so they can
+# decide whether to import via sync-from-vault.sh.
+# Vault paths come from scripts/lib/vault-config.sh (which reads .env).
+# Silently skip if vault isn't configured (.env not set up).
+source "$REPO_ROOT/scripts/lib/vault-config.sh"
+
+if [ "$VAULT_CONFIGURED" = "true" ]; then
+  LAST_SYNC="$VAULT_MIRROR_FULL/.last-sync"
+  if [ -d "$VAULT_MIRROR_FULL" ] && [ -f "$LAST_SYNC" ]; then
+    newer=$(find "$VAULT_MIRROR_FULL" -type f -name '*.md' -newer "$LAST_SYNC" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "${newer:-0}" -gt 0 ]; then
+      PARTS+=("🔄 ${newer} vault file(s) have edits not in the repo. Run \`bash scripts/sync-from-vault.sh\` to import.")
     fi
   fi
 fi
