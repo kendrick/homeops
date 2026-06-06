@@ -95,3 +95,18 @@
 
 - The Mac stays the maintainer's workstation (Claude Code, SSH, browsers, IDE).
 - A Mac mini as a complementary Apple-ecosystem appliance alongside the PC homelab — HomeKit Home Hub workloads, native iCloud Photos export, Plex Server with Apple Silicon performance, Apple TV automation helpers. Two-box pattern, not replacement. Worth considering at WALK or RUN, not CRAWL.
+
+---
+
+## 2026-06-05 — Don't pad `activeContext.md` with items needed weeks away
+
+**Tried:** Early CRAWL-01 planning surfaced a "BOM (block 1a; long lead time, order first)" section in `activeContext.md` listing the Sonoff Zigbee dongle, TP-Link managed switch, GL.iNet Flint 2 router, USB extension, and label maker. Reasoning at the time: "long lead time, start the shipping clock now so the gear is on hand when you need it."
+
+**What broke:** When CRAWL-01 actually started, the maintainer realized none of those BOM items are needed until CRAWL-09 (Zigbee) and CRAWL-10 (network rebuild) — six-plus sessions out at weekend pace. The "long lead time" framing was correct in spirit but wrong in scale: 2-7 days of shipping doesn't bottleneck a workflow that's 5-6+ weeks from needing the gear. Padding activeContext with items that far out turned it into an archive of what-was-relevant-before rather than a queue of what's-next.
+
+**Why we backed out:** activeContext's hard rule is "queue, not archive" (≤20 non-empty lines). Items further out than the next 1-2 sessions don't earn a slot. They belong in the issue body (where the hardware now lives under `## Hardware needed` in CRAWL-09 / 10 / 11 / 12), not in the maintainer's top-of-mind queue. The BOM section was deleted from activeContext on 2026-06-05.
+
+**Don't suggest:**
+- Listing long-lead-time hardware in `activeContext.md` when the use is more than 1-2 sessions out.
+- "Order now because shipping takes a few days" reasoning without checking how many sessions away the actual need is.
+- When proposing orders, anchor on session distance (not calendar shipping time). Recommend ordering only when the maintainer is ~1-2 sessions from needing the gear (e.g., after CRAWL-07 completes, order for CRAWL-09 / 10).
