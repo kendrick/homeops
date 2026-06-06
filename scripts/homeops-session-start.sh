@@ -62,20 +62,34 @@ if [ -n "$reference_file" ]; then
 fi
 
 # Vault mirror delta detection.
-# If any .md file in the vault mirror is newer than the .last-sync marker,
-# the user edited it in Obsidian after the last push. Surface so they can
-# decide whether to import via sync-from-vault.sh.
-# Vault paths come from scripts/lib/vault-config.sh (which reads .env).
+# Compare each .md file in the vault mirror against its corresponding repo file.
+# If the vault copy is newer, the maintainer edited it in Obsidian since the
+# last import. Surface so they can decide whether to import via sync-from-vault.sh.
+# Per-file comparison (instead of comparing against .last-sync) makes detection
+# robust to within-session edits — the Stop hook's frequent firing doesn't mask
+# them.
 # Silently skip if vault isn't configured (.env not set up).
 source "$REPO_ROOT/scripts/lib/vault-config.sh"
 
-if [ "$VAULT_CONFIGURED" = "true" ]; then
-  LAST_SYNC="$VAULT_MIRROR_FULL/.last-sync"
-  if [ -d "$VAULT_MIRROR_FULL" ] && [ -f "$LAST_SYNC" ]; then
-    newer=$(find "$VAULT_MIRROR_FULL" -type f -name '*.md' -newer "$LAST_SYNC" 2>/dev/null | wc -l | tr -d ' ')
-    if [ "${newer:-0}" -gt 0 ]; then
-      PARTS+=("🔄 ${newer} vault file(s) have edits not in the repo. Run \`bash scripts/sync-from-vault.sh\` to import.")
+if [ "$VAULT_CONFIGURED" = "true" ] && [ -d "$VAULT_MIRROR_FULL" ]; then
+  vault_newer=0
+  while IFS= read -r vault_file; do
+    # Map vault path → repo path. Only difference: vault has `working-memory/`,
+    # repo has `_working-memory/`. Everything under `docs/` is identical.
+    rel="${vault_file#$VAULT_MIRROR_FULL/}"
+    case "$rel" in
+      working-memory/*) repo_file="$REPO_ROOT/_working-memory/${rel#working-memory/}" ;;
+      *)                repo_file="$REPO_ROOT/$rel" ;;
+    esac
+    if [ -f "$repo_file" ]; then
+      vault_ts=$(stat -f %m "$vault_file" 2>/dev/null || stat -c %Y "$vault_file" 2>/dev/null || echo 0)
+      repo_ts=$(stat -f %m "$repo_file" 2>/dev/null || stat -c %Y "$repo_file" 2>/dev/null || echo 0)
+      [ "${vault_ts:-0}" -gt "${repo_ts:-0}" ] && vault_newer=$((vault_newer + 1))
     fi
+  done < <(find "$VAULT_MIRROR_FULL" -type f -name '*.md' 2>/dev/null)
+
+  if [ "$vault_newer" -gt 0 ]; then
+    PARTS+=("🔄 ${vault_newer} vault file(s) newer than the repo. Run \`bash scripts/sync-from-vault.sh\` to import.")
   fi
 fi
 

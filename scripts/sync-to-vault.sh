@@ -26,11 +26,14 @@ fi
 mkdir -p "$VAULT_MIRROR_FULL/docs/phases" "$VAULT_MIRROR_FULL/working-memory"
 
 # Mirror manifest. Keep aligned with sync-from-vault.sh.
+# `--update` prevents clobbering vault-side edits that are newer than the
+# repo version (e.g., Obsidian edits during a Claude session). Without it,
+# the Stop-hook auto-push would silently overwrite in-progress edits.
 copy() {
   local src="$REPO_ROOT/$1"
   local dst="$VAULT_MIRROR_FULL/$2"
   if [ -f "$src" ]; then
-    rsync -a "$src" "$dst"
+    rsync -a --update "$src" "$dst"
     return 0
   fi
   return 1
