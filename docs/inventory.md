@@ -61,6 +61,16 @@ Track all smart home devices here. Update as you purchase and install.
 - **Location:** Network cabinet
 - **Notes:** Handles VLAN segmentation, firewall rules
 
+### UPS (Homelab)
+
+- **Make/Model:** CyberPower CP1500PFCRM2U (2U rackmount, pure sine wave)
+- **Purchase Date:** [TBD]
+- **Purchase Price:** ~$280
+- **Location:** Office (TBD until racked / shelved next to the Proxmox host)
+- **Entity IDs:** `sensor.first_office_ups_*` family (battery_charge, load, status) — surfaced via NUT
+- **Protocol:** USB → NUT
+- **Notes:** Committed per [ADR-011](decisions.md#adr-011). Protects the i5-11400 Proxmox host + core networking. Sized to also cover the future second Proxmox node per [ADR-012](decisions.md#adr-012) when that's built. Battery is a user-replaceable RBC pack; track replacement in the Battery-Powered Devices maintenance table below once installed.
+
 ---
 
 ## Lighting (Switches & Dimmers)

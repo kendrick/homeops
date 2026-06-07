@@ -704,6 +704,152 @@ Run Claude Code in a dedicated unprivileged Debian LXC (CT 101) — Node CLI und
 2. **Laptop-only (no off-laptop install):** Long-running agents tie up the laptop and lose `/loop` and background-agent value the moment the laptop sleeps.
 3. **Docker container on a Docker LXC:** Inconsistent with ADR-009 (native LXC over Docker) and adds an unnecessary abstraction for a single-process Node CLI.
 
+---
+
+---
+id: ADR-011
+title: Power resilience — targeted UPS, not whole-home battery
+status: accepted
+date: 2026-06
+decision_question: How should the homelab survive grid disturbances — targeted rackmount UPS, grid-tied battery service, or owned whole-home battery?
+decision_outcome: Commit a single 2U rackmount UPS (CyberPower CP1500PFCRM2U) protecting the i5-11400 Proxmox host and core networking; defer whole-home battery and grid-tied battery service.
+alternatives_considered:
+  - option: Base Power Energy+Battery
+    reason_rejected: ~$695 install plus $19/mo membership, ~13.8¢/kWh, 36-month REP lock with $500 ETF, 10-year battery services agreement, equipment not owned, ~$350-450/yr premium at our usage, and startup counterparty risk.
+  - option: Owned whole-home battery (Anker SOLIX X1 / E10)
+    reason_rejected: ~$13-18k installed; ROI is poor with the federal storage tax credit expired 2026-01-01 and no solar planned to drive arbitrage.
+  - option: Portable Anker F3800 + smart inlet box
+    reason_rejected: Viable as a future fallback if outages outgrow the UPS, but premature today given the actual outage profile is short flickers.
+decision_drivers:
+  - The actual problem is short flickers, not confirmed long outages
+  - Equipment owned outright, no contract or REP lock
+  - Federal storage tax credit expired 2026-01-01; no solar planned (eliminates the arbitrage case for a large battery)
+  - Counterparty risk in grid-tied battery startups
+supersedes: null
+superseded_by: null
+---
+
+## ADR-011: Power resilience — targeted UPS, not whole-home battery
+
+**Date:** 2026-06
+**Status:** Accepted
+**Deciders:** Kendrick
+
+### Context
+
+The new house has had a handful of short grid flickers — enough to spook the homelab during the in-progress Proxmox build (CRAWL-01), not enough to call for a whole-home battery. Three resilience postures were on the table: a rackmount UPS sized for the homelab and networking only, a grid-tied battery service (Base Power Energy+Battery), or an owned whole-home battery (Anker SOLIX class). The right answer depends on what we're actually defending against. A UPS handles the flickers we see today and gives a graceful-shutdown window for the rare longer outage; the bigger options solve a problem we haven't actually observed and lock us into contracts or capital decisions that don't match a no-solar, low-usage household.
+
+### Decision
+
+Commit one CyberPower CP1500PFCRM2U (~$280) — 2U rackmount, pure sine wave, USB monitoring via NUT. Scope: the i5-11400 Proxmox host plus the core networking gear it depends on (switch, router/AP). The UPS lives in the office, co-located with the host. NUT integration in Home Assistant surfaces battery / load / status and drives a graceful-shutdown automation when battery drops below 20%. Sizing leaves headroom for the future second Proxmox node described in ADR-012 — when that node is built, it sits on the same UPS rather than a second one.
+
+Outage frequency and duration get tracked informally over the next 1-2 months. If the profile turns out to include sustained multi-hour outages, ADR-011 gets revisited and the F3800-class portable becomes a real candidate.
+
+### Consequences
+
+**Positive:**
+
+- Solves the actual observed problem (flickers + brief outages) for the loads that matter
+- Owned outright; no contract, no REP lock, no monthly fee
+- One unit covers both Proxmox hosts (current and planned future), keeping the resilience story simple
+- NUT + HA integration is well-trodden, so the automation work is small
+
+**Negative:**
+
+- No coverage for non-rack loads (fridge, HVAC, anything outside the office)
+- Runtime is minutes-to-low-tens-of-minutes, not hours — sustained outages still take the homelab down (gracefully)
+- Battery replacement every 3-5 years is a small ongoing cost
+
+**Neutral:**
+
+- Leaves the whole-home and portable-battery options open as future moves; this is a starting posture, not a permanent ceiling
+
+### Alternatives Considered
+
+1. **Base Power Energy+Battery:** ~$695 install plus $19/mo membership, ~13.8¢/kWh on a 36-month REP lock with a $500 ETF, a 10-year battery services agreement, equipment not owned, ~$350-450/yr premium at our usage profile, and startup counterparty risk on top. Wrong shape for a low-usage household that wants to keep its energy plan separate from its backup posture.
+2. **Owned whole-home battery (Anker SOLIX X1 / E10):** $13-18k installed. The math worked when the federal storage tax credit was alive; it expired 2026-01-01, and with no solar planned there's no arbitrage to recover the capital. Defer until the underlying conditions change.
+3. **Portable Anker F3800 + smart inlet box:** A legitimate middle path if outages turn out to be longer than a UPS covers. Deferred — revisit if outage tracking shows the UPS is undersized for the actual profile.
+
+---
+
+---
+id: ADR-012
+title: Two-node Proxmox topology — recommended expansion path (not yet built)
+status: accepted
+date: 2026-06
+decision_question: When the i5-11400 host's 16GB or single-node footprint becomes constraining, what's the right move — refresh the existing host, replace it, or add capacity another way?
+decision_outcome: When the trigger fires, add a second low-power mini-PC Proxmox node in a 10" office mini-rack alongside the i5-11400; do not refresh or replace the existing host. Per-service placement across the two nodes is a follow-on decision deferred until buildout.
+alternatives_considered:
+  - option: Bump i5-11400 to 64GB DDR4 (the openQuestion's Path B)
+    reason_rejected: Sinks money into legacy DDR4 in a dead-end LGA 1200 socket; DDR4 prices are rising as production winds down across Samsung / SK Hynix / Micron.
+  - option: Refresh CPU + board (LGA 1700 or 1851) and reuse peripherals (Path C)
+    reason_rejected: Disruptive — forces an HA migration during the refresh window — for modest ROI vs. simply adding a second node. Keeps single-node fragility.
+  - option: Sell the i5-11400 and replace with a single mini-PC (Path D)
+    reason_rejected: Loses the case/PSU/cooler reuse and the redundancy headroom that having two nodes provides. Form-factor win without the resilience win.
+decision_drivers:
+  - LGA 1200 socket is end-of-life; DDR4 is winding down
+  - Adding a node avoids downtime to migrate HA off the existing host
+  - Mini-rack form factor preserves desk space and gives the homelab a growth surface
+  - Two nodes preserves optionality (separate today, cluster later if desired)
+supersedes: null
+superseded_by: null
+---
+
+## ADR-012: Two-node Proxmox topology — recommended expansion path (not yet built)
+
+**Date:** 2026-06
+**Status:** Accepted
+**Deciders:** Kendrick
+
+### Context
+
+The openQuestion "Homelab host: RAM bump vs platform refresh" has been sitting open since the CRAWL plan was drawn up, with four candidate paths (stay at 16GB, bump DDR4, refresh board+CPU+RAM, sell+replace with mini-PC). The question doesn't need to be resolved today — CRAWL-01 isn't even done — but leaving it open invites re-litigation every time the topic comes up, and the trigger conditions are clear enough that a recommended answer can land now. Capturing the answer here also gives the future build a documented BOM to work against instead of a fresh research pass.
+
+### Decision
+
+When the i5-11400 host hits the trigger conditions below, the response is to **add** a second Proxmox node — a low-power mini-PC in a 10" office mini-rack — not to refresh or replace the existing host. The two nodes coexist. Per-service placement (separate vs. cluster; HA stays on the i5-11400 vs. migrates; which services live where) is a downstream decision deferred until buildout is actually triggered.
+
+**Triggers (any one is sufficient):**
+
+- RAM on the i5-11400 is genuinely capacity-bound (>85% steady-state)
+- A desired service won't fit at the current footprint (Immich, Jellyfin, Paperless-ngx class workloads)
+- Single-node fragility starts costing more than the second node would
+
+**Recommended BOM (subject to refresh when buildout is closer):**
+
+- Rack: 10" enclosed ~8U (e.g. DeskPi RackMate T1) ~$130
+- Compute: low-power mini-PC running Proxmox (e.g. Beelink EQ14 N150 16GB) ~$200; MS-01 noted as an overkill-but-future-proof option
+- Switch: managed 2.5GbE 8-port (e.g. Sodola / Hasivo) ~$130
+- Patch panel + cable management + brackets ~$80
+- **Foundation total: ~$540** (excluding the UPS, which is already committed under [ADR-011](#adr-011) and sized to cover this node)
+
+Storage / NAS, second-node backup target, and PoE switch options are deferred to RUN.
+
+### Consequences
+
+**Positive:**
+
+- Retires the four-path openQuestion with a recommended answer; future-me doesn't re-litigate
+- Avoids sinking money into dead-end DDR4 on a dead-end socket
+- No HA migration window required when adding capacity (the existing host keeps running)
+- Preserves the option to cluster the two nodes later if Proxmox cluster gives a clear win
+
+**Negative:**
+
+- Two hosts to maintain (snapshot, backup, upgrade) instead of one
+- "What runs where" becomes a real decision once both nodes exist
+- Mini-rack adds physical footprint in the office (small, but real)
+
+**Neutral:**
+
+- Buildout is deferred — this ADR is a posture, not a project plan. No issues are pre-created against it; the trigger is the gate.
+
+### Alternatives Considered
+
+1. **Bump i5-11400 to 64GB DDR4 (Path B):** Sinks money into legacy DDR4 in a socket with no upgrade path. DDR4 prices have roughly doubled since 2022 and the supply story is getting worse, not better.
+2. **Refresh CPU + board + RAM, keep peripherals (Path C):** Cheaper than it looks (~$500-700 with Noctua's free LGA 1700 mount kits and ~$400 of reusable parts), but it forces an HA migration during the refresh and leaves the homelab still single-node. Adding a node instead gets both the capacity and the redundancy headroom.
+3. **Sell the i5-11400 and replace with a single mini-PC (Path D):** The form-factor win is real, but it loses the case/PSU/cooler reuse value and stays single-node. If the mini-rack aesthetic is what's wanted, getting there by adding (rather than replacing) is the better path.
+
 ```
 
 ---

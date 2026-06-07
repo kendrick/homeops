@@ -4,6 +4,22 @@
 <!-- Do not edit by hand — your changes will be overwritten. -->
 <!-- Most recent at top. -->
 
+## 2026-06 — ADR-012: Two-node Proxmox topology — recommended expansion path (not yet built)
+
+**Status:** accepted
+
+When the trigger fires, add a second low-power mini-PC Proxmox node in a 10" office mini-rack alongside the i5-11400; do not refresh or replace the existing host. Per-service placement across the two nodes is a follow-on decision deferred until buildout.
+
+→ [docs/decisions.md#adr-012](../docs/decisions.md#adr-012)
+
+## 2026-06 — ADR-011: Power resilience — targeted UPS, not whole-home battery
+
+**Status:** accepted
+
+Commit a single 2U rackmount UPS (CyberPower CP1500PFCRM2U) protecting the i5-11400 Proxmox host and core networking; defer whole-home battery and grid-tied battery service.
+
+→ [docs/decisions.md#adr-011](../docs/decisions.md#adr-011)
+
 ## 2026-05 — ADR-010: Claude Code on a dedicated dev LXC
 
 **Status:** accepted

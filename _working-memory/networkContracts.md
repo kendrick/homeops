@@ -21,6 +21,8 @@
 
 **Room abbreviations (only when needed for length):** `br` (bedroom), `bath` (bathroom), `lr` (living room), `fr` (family room), `kit` (kitchen)
 
+**UPS / NUT entities (per [ADR-011](../docs/decisions.md#adr-011)):** follow the same `{domain}.{floor}_{room}_{detail}` grammar — e.g. `sensor.first_office_ups_battery_charge`, `sensor.first_office_ups_load`, `sensor.first_office_ups_status`. Verify the office floor prefix against the actual house layout before naming; if the office isn't on the first floor, substitute the correct prefix.
+
 **Source of truth:** PRD §Entity Naming Convention.
 
 ## VLAN / IP plan
