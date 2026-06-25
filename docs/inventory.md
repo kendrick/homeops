@@ -119,14 +119,25 @@ Track all smart home devices here. Update as you purchase and install.
 
 ### Upstairs Thermostat
 
-- **Make/Model:** Honeywell T6 Pro
+- **Make/Model:** Honeywell Home T6 Pro (WiFi)
 - **Purchase Date:** N/A (builder-installed)
 - **Location:** Upstairs hallway
-- **Entity ID:** `climate.upstairs`
-- **Protocol:** WiFi
+- **Entity ID:** `climate.second_hallway` (target per [naming convention](../_working-memory/networkContracts.md#entity-naming-convention); legacy `climate.upstairs` to be reconciled at pairing)
+- **Protocol:** WiFi → HomeKit Controller (local, no cloud)
 - **VLAN:** IoT (VLAN 10)
 - **MAC Address:** [TBD]
-- **Notes:** Controls upstairs HVAC zone
+- **Notes:** Controls upstairs HVAC zone. Integrated locally via HA HomeKit Controller per [CRAWL-17](https://github.com/kendrick/homeops/issues/17) — chosen over the Resideo cloud integration so control survives internet outages. Not in Apple Home, so pairing is clean. After the CRAWL-10 VLAN rebuild, needs an mDNS reflector across the HA↔IoT boundary.
+
+### Downstairs Thermostat
+
+- **Make/Model:** Honeywell Home T6 Pro (WiFi)
+- **Purchase Date:** N/A (builder-installed)
+- **Location:** [TBD - main floor]
+- **Entity ID:** `climate.first_hallway` (target per convention; actual assigned at HomeKit pairing)
+- **Protocol:** WiFi → HomeKit Controller (local, no cloud)
+- **VLAN:** IoT (VLAN 10)
+- **MAC Address:** [TBD]
+- **Notes:** Controls main-floor HVAC zone. Same local HomeKit path as the upstairs unit — see [CRAWL-17](https://github.com/kendrick/homeops/issues/17). Confirm exact location/floor prefix before finalizing the entity name.
 
 ### Garage Mini-Split
 
