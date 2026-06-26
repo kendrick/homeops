@@ -49,6 +49,27 @@
 
 **Source of truth:** PRD §Network Architecture + ADR-003.
 
+## Physical topology (service loop)
+
+Every Cat 6 drop home-runs to a shallow (~3-4" deep) laundry-room closet, so the Layer-2 switch is anchored there. Router, homelab, and primary WiFi live in the office. The two are joined by a **service loop** over existing office drops. See [ADR-013](../docs/decisions.md#adr-013) for the full rationale.
+
+```
+[ISP gateway · closet, bridged] --Drop A (WAN)--> [Flint router · office + Proxmox + UPS]
+                                                          |
+                                                   Drop B (LAN, VLAN trunk 1/10/20/30)
+                                                          v
+                                          [PoE switch · laundry wall, beside closet] --> all room drops + PoE APs
+```
+
+- **Closet:** ISP gateway in **bridge/passthrough** mode (routing + WiFi off; fall back to IP passthrough/DMZ to the Flint WAN if true bridge is unavailable). PoE switch **wall-mounted beside the closet**, not inside the shallow cavity (depth + ventilation). Switch = L2 star for all drops + PoE source for APs.
+- **Office:** Flint router (routing/firewall/VLAN tagging/office WiFi), Proxmox host, UPS.
+- **Service loop:** Drop A = gateway→router WAN. Drop B = router→switch LAN, configured as a **VLAN trunk** carrying 1/10/20/30. Same-VLAN room-to-room traffic switches locally in the closet; only routed/internet traffic traverses the loop.
+- **WiFi:** distributed — PoE APs at central ceiling/wall locations off the room drops, not centralized in the office. APs are a WALK-phase add.
+
+**Depends on:** two-plus Cat 6 drops terminating in the office (confirmed). With a single office drop, WAN+LAN would instead share one cable as tagged VLANs.
+
+**Source of truth:** ADR-013.
+
 ## Protocol assignments
 
 | Protocol  | Use case                          | Default? | Rationale                                                |

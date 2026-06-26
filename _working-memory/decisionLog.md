@@ -4,6 +4,14 @@
 <!-- Do not edit by hand — your changes will be overwritten. -->
 <!-- Most recent at top. -->
 
+## 2026-06 — ADR-013: Physical network topology — service loop with office-side router/homelab
+
+**Status:** accepted
+
+Keep the ISP gateway (bridged) and a wall-mounted PoE switch at the laundry-closet home-run point; put the router, homelab, and UPS in the office; join them with a two-cable service loop over existing office drops that carries the ADR-003 VLAN trunk. Distribute WiFi via PoE APs on the room drops rather than centralizing it in the office.
+
+→ [docs/decisions.md#adr-013](../docs/decisions.md#adr-013)
+
 ## 2026-06 — ADR-012: Two-node Proxmox topology — recommended expansion path (not yet built)
 
 **Status:** accepted

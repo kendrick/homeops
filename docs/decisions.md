@@ -46,6 +46,7 @@ Document major technical decisions here. This helps future you (and Claude Code)
 ---
 
 ---
+
 id: ADR-001
 title: Home Assistant as Core Platform
 status: accepted
@@ -53,19 +54,21 @@ date: 2024-12
 decision_question: What platform should be the core smart-home brain that supports self-hosting, privacy, local control, and avoids vendor lock-in?
 decision_outcome: Use Home Assistant OS as the core smart home brain.
 alternatives_considered:
-  - option: SmartThings
-    reason_rejected: Cloud-dependent and Samsung could shut down the service at any time.
-  - option: Hubitat
-    reason_rejected: Local but has a smaller ecosystem and is expensive per hub.
-  - option: Custom solution
-    reason_rejected: Too much reinventing the wheel for marginal gain.
-decision_drivers:
-  - Self-hosting and privacy goals
-  - Avoidance of vendor lock-in and subscriptions
-  - Need for broad integration support and an active community
-  - Preference for local control over cloud dependencies
-supersedes: null
-superseded_by: null
+
+- option: SmartThings
+  reason_rejected: Cloud-dependent and Samsung could shut down the service at any time.
+- option: Hubitat
+  reason_rejected: Local but has a smaller ecosystem and is expensive per hub.
+- option: Custom solution
+  reason_rejected: Too much reinventing the wheel for marginal gain.
+  decision_drivers:
+- Self-hosting and privacy goals
+- Avoidance of vendor lock-in and subscriptions
+- Need for broad integration support and an active community
+- Preference for local control over cloud dependencies
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-001: Home Assistant as Core Platform
@@ -111,6 +114,7 @@ Use Home Assistant OS as the core smart home brain.
 ---
 
 ---
+
 id: ADR-002
 title: Zigbee as Primary Device Protocol
 status: accepted
@@ -118,19 +122,21 @@ date: 2024-12
 decision_question: Which wireless protocol should be the primary choice for switches, sensors, and other smart-home devices?
 decision_outcome: Use Zigbee 3.0 as the primary protocol, falling back to WiFi only where no Zigbee alternative exists.
 alternatives_considered:
-  - option: Z-Wave
-    reason_rejected: Proprietary, requires a separate stick, and has fewer devices available.
-  - option: WiFi only
-    reason_rejected: Cloud risk, network congestion, and higher power consumption.
-  - option: Matter/Thread
-    reason_rejected: Ecosystem is too immature with limited devices available today.
-decision_drivers:
-  - Open standard with no vendor lock-in
-  - Local control without cloud dependency
-  - Mesh networking extends range across the house
-  - Lower power consumption for battery-powered devices
-supersedes: null
-superseded_by: null
+
+- option: Z-Wave
+  reason_rejected: Proprietary, requires a separate stick, and has fewer devices available.
+- option: WiFi only
+  reason_rejected: Cloud risk, network congestion, and higher power consumption.
+- option: Matter/Thread
+  reason_rejected: Ecosystem is too immature with limited devices available today.
+  decision_drivers:
+- Open standard with no vendor lock-in
+- Local control without cloud dependency
+- Mesh networking extends range across the house
+- Lower power consumption for battery-powered devices
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-002: Zigbee as Primary Device Protocol
@@ -177,6 +183,7 @@ Use Zigbee 3.0 as primary protocol, with WiFi for devices that don't have Zigbee
 ---
 
 ---
+
 id: ADR-003
 title: Network Segmentation with VLANs
 status: accepted
@@ -184,19 +191,21 @@ date: 2024-12
 decision_question: How should the network be structured to isolate IoT devices from personal devices while still letting Home Assistant control them?
 decision_outcome: Implement VLAN segmentation with separate trusted, IoT, guest, and server VLANs, plus firewall rules that allow trusted-to-IoT control but block IoT-to-trusted access.
 alternatives_considered:
-  - option: Flat network
-    reason_rejected: Easy to set up but offers no isolation and is insecure.
-  - option: Separate physical networks
-    reason_rejected: Expensive and requires duplicate access points throughout the house.
-  - option: Firewall only (no VLANs)
-    reason_rejected: Provides less granular control than VLAN-based segmentation.
-decision_drivers:
-  - IoT devices are security risks and must be isolated from personal devices
-  - Privacy and security goals of the homeowner
-  - Desire to block IoT devices from arbitrary internet access
-  - Need to retain visibility into network traffic
-supersedes: null
-superseded_by: null
+
+- option: Flat network
+  reason_rejected: Easy to set up but offers no isolation and is insecure.
+- option: Separate physical networks
+  reason_rejected: Expensive and requires duplicate access points throughout the house.
+- option: Firewall only (no VLANs)
+  reason_rejected: Provides less granular control than VLAN-based segmentation.
+  decision_drivers:
+- IoT devices are security risks and must be isolated from personal devices
+- Privacy and security goals of the homeowner
+- Desire to block IoT devices from arbitrary internet access
+- Need to retain visibility into network traffic
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-003: Network Segmentation with VLANs
@@ -246,9 +255,14 @@ Firewall rules allow trusted → IoT control, but IoT cannot reach trusted devic
 2. **Separate physical networks:** Expensive, requires duplicate APs
 3. **Firewall only (no VLANs):** Less granular control
 
+### Related
+
+- [ADR-013](#adr-013) — the physical topology (service loop, where the router/switch/APs live) that carries this VLAN scheme. ADR-003 stays the logical source of truth; ADR-013 implements it, and does not supersede it.
+
 ---
 
 ---
+
 id: ADR-004
 title: Nabu Casa Cloud for Remote Access
 status: accepted
@@ -256,19 +270,21 @@ date: 2024-12
 decision_question: How should remote access to Home Assistant and Apple Home / Siri integration be provided for the household?
 decision_outcome: Subscribe to Nabu Casa Cloud ($6.50/month) for remote access and Apple Home integration.
 alternatives_considered:
-  - option: Tailscale VPN
-    reason_rejected: Free but requires VPN on every device and offers no Siri integration.
-  - option: Port forwarding + DuckDNS
-    reason_rejected: Risky because it exposes Home Assistant directly to the internet.
-  - option: Cloudflare Tunnel
-    reason_rejected: More setup overhead and less Home Assistant-specific than Nabu Casa.
-decision_drivers:
-  - Need for simple, reliable remote access without exposing HA to the internet
-  - Existing Apple ecosystem in the household requires Siri integration
-  - Encrypted tunnel without manual port forwarding is safer
-  - Subscription cost is acceptable and supports HA development
-supersedes: null
-superseded_by: null
+
+- option: Tailscale VPN
+  reason_rejected: Free but requires VPN on every device and offers no Siri integration.
+- option: Port forwarding + DuckDNS
+  reason_rejected: Risky because it exposes Home Assistant directly to the internet.
+- option: Cloudflare Tunnel
+  reason_rejected: More setup overhead and less Home Assistant-specific than Nabu Casa.
+  decision_drivers:
+- Need for simple, reliable remote access without exposing HA to the internet
+- Existing Apple ecosystem in the household requires Siri integration
+- Encrypted tunnel without manual port forwarding is safer
+- Subscription cost is acceptable and supports HA development
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-004: Nabu Casa Cloud for Remote Access
@@ -315,6 +331,7 @@ Subscribe to Nabu Casa Cloud ($6.50/month) for remote access and Apple Home inte
 ---
 
 ---
+
 id: ADR-005
 title: Mix of Inovelli and Shelly Switches
 status: accepted
@@ -322,19 +339,21 @@ date: 2024-12
 decision_question: Which smart switches should be used throughout the house given a ~$1,000 budget and varied room requirements?
 decision_outcome: Use Inovelli Blue switches for high-traffic and scene-control areas (15 switches) and Shelly relays for shallow boxes and aesthetic-preserving locations (10 units).
 alternatives_considered:
-  - option: All Inovelli
-    reason_rejected: Over budget at $1,500+ and overkill for low-traffic rooms.
-  - option: All Shelly
-    reason_rejected: Cheaper but lacks scene control and is WiFi-only.
-  - option: Budget brands (Sonoff)
-    reason_rejected: Reliability concerns and poor Home Assistant integration.
-decision_drivers:
-  - $1,000 switch budget must accommodate roughly 25 switches
-  - High-traffic rooms benefit from scene control and LED notifications
-  - Some boxes are too shallow for Inovelli and require slim relays
-  - Preserving existing switch aesthetic matters in certain rooms (HAF)
-supersedes: null
-superseded_by: null
+
+- option: All Inovelli
+  reason_rejected: Over budget at $1,500+ and overkill for low-traffic rooms.
+- option: All Shelly
+  reason_rejected: Cheaper but lacks scene control and is WiFi-only.
+- option: Budget brands (Sonoff)
+  reason_rejected: Reliability concerns and poor Home Assistant integration.
+  decision_drivers:
+- $1,000 switch budget must accommodate roughly 25 switches
+- High-traffic rooms benefit from scene control and LED notifications
+- Some boxes are too shallow for Inovelli and require slim relays
+- Preserving existing switch aesthetic matters in certain rooms (HAF)
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-005: Mix of Inovelli and Shelly Switches
@@ -379,6 +398,7 @@ Use Inovelli Blue switches for high-traffic / scene-control areas (15 switches).
 ---
 
 ---
+
 id: ADR-006
 title: Resideo Panel as Z-Wave Hub + Wall Interface
 status: accepted
@@ -386,19 +406,21 @@ date: 2024-12
 decision_question: How should the builder-installed Resideo ProSeries panel be used given that professional monitoring is not desired and Home Assistant should remain the brain?
 decision_outcome: Use the Resideo panel as a Z-Wave hub, a wall-mounted HomeKit interface for HA, and a local sensor platform via AlarmDecoder, with HA remaining the brain.
 alternatives_considered:
-  - option: Ignore Resideo
-    reason_rejected: Wastes builder-installed equipment with real capabilities.
-  - option: Replace with HA-only
-    reason_rejected: Loses the touchscreen wall interface and the built-in Z-Wave hub.
-  - option: Use Total Connect
-    reason_rejected: Introduces cloud dependency and an ongoing monthly fee.
-decision_drivers:
-  - Builder already installed a capable Resideo ProSeries panel with Z-Wave and HomeKit
-  - Desire to avoid monthly monitoring fees and cloud dependencies
-  - Value of a wall-mounted touchscreen interface for the household
-  - Reuse of the panel's Z-Wave controller avoids buying a separate stick
-supersedes: null
-superseded_by: null
+
+- option: Ignore Resideo
+  reason_rejected: Wastes builder-installed equipment with real capabilities.
+- option: Replace with HA-only
+  reason_rejected: Loses the touchscreen wall interface and the built-in Z-Wave hub.
+- option: Use Total Connect
+  reason_rejected: Introduces cloud dependency and an ongoing monthly fee.
+  decision_drivers:
+- Builder already installed a capable Resideo ProSeries panel with Z-Wave and HomeKit
+- Desire to avoid monthly monitoring fees and cloud dependencies
+- Value of a wall-mounted touchscreen interface for the household
+- Reuse of the panel's Z-Wave controller avoids buying a separate stick
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-006: Resideo Panel as Z-Wave Hub + Wall Interface
@@ -452,6 +474,7 @@ HA remains the brain, Resideo is a peripheral device.
 ---
 
 ---
+
 id: ADR-007
 title: Forgejo on a native LXC for self-hosted git
 status: accepted
@@ -459,21 +482,23 @@ date: 2026-05
 decision_question: How should self-hosted git be deployed on the Proxmox homelab — native LXC, Docker compose, or a dedicated VM?
 decision_outcome: Run Forgejo as a native binary in an unprivileged Debian LXC on Proxmox (CT 100), backed by SQLite, exposed over Tailscale.
 alternatives_considered:
-  - option: Gitea
-    reason_rejected: Forgejo is a community fork with the same shape and stronger long-term governance; no Gitea-specific feature is needed.
-  - option: GitLab CE
-    reason_rejected: Heavyweight for a single-user homelab; resource cost outweighs any feature gain.
-  - option: Forgejo via Docker Compose (with Postgres)
-    reason_rejected: Stacks Docker on top of LXC for no benefit on Proxmox; doubles backup surface (Docker volumes + LXC snapshots); pushes the project into the privileged-LXC + Docker-in-LXC pattern unnecessarily.
-  - option: Dedicated VM for Forgejo
-    reason_rejected: VM overhead is wasted; LXC + native binary is lighter and snapshots/backups work identically.
-decision_drivers:
-  - Proxmox already provides container lifecycle, snapshots, vzdump backups — avoid layering Docker on top
-  - Single-user homelab; SQLite is sufficient and removes Postgres operational burden
-  - Tailscale-only exposure means no public ingress needed
-  - Smaller blast radius if compromised (unprivileged LXC + no Docker)
-supersedes: null
-superseded_by: null
+
+- option: Gitea
+  reason_rejected: Forgejo is a community fork with the same shape and stronger long-term governance; no Gitea-specific feature is needed.
+- option: GitLab CE
+  reason_rejected: Heavyweight for a single-user homelab; resource cost outweighs any feature gain.
+- option: Forgejo via Docker Compose (with Postgres)
+  reason_rejected: Stacks Docker on top of LXC for no benefit on Proxmox; doubles backup surface (Docker volumes + LXC snapshots); pushes the project into the privileged-LXC + Docker-in-LXC pattern unnecessarily.
+- option: Dedicated VM for Forgejo
+  reason_rejected: VM overhead is wasted; LXC + native binary is lighter and snapshots/backups work identically.
+  decision_drivers:
+- Proxmox already provides container lifecycle, snapshots, vzdump backups — avoid layering Docker on top
+- Single-user homelab; SQLite is sufficient and removes Postgres operational burden
+- Tailscale-only exposure means no public ingress needed
+- Smaller blast radius if compromised (unprivileged LXC + no Docker)
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-007: Forgejo on a native LXC for self-hosted git
@@ -518,6 +543,7 @@ Use the community Proxmox helper script to land an unprivileged Debian LXC (CT 1
 ---
 
 ---
+
 id: ADR-008
 title: Tailscale for off-network access to the homelab
 status: accepted
@@ -525,19 +551,21 @@ date: 2026-05
 decision_question: How should the homelab (Forgejo, Claude Code dev LXC, future services) be reachable from off-network without exposing public ingress?
 decision_outcome: Install Tailscale on each LXC that needs external reachability; route via the Tailscale mesh.
 alternatives_considered:
-  - option: Port forwarding + dynamic DNS
-    reason_rejected: Exposes services to the public internet; demands TLS termination + auth at every service; one misconfiguration leaks the homelab.
-  - option: Self-hosted WireGuard
-    reason_rejected: Functional but adds an operational burden — key rotation, NAT traversal, mobile-client UX. Tailscale solves these for free at this scale.
-  - option: Cloudflare Tunnel
-    reason_rejected: Routes traffic through Cloudflare; mismatches the self-hosting + privacy posture of the broader project.
-decision_drivers:
-  - Zero public ingress required (smaller attack surface)
-  - Free tier is sufficient (≤3 users, ≤100 devices)
-  - Cross-OS clients with workable UX (macOS, iOS, Linux)
-  - Subnet routing available as a future upgrade if more LAN reach is wanted
-supersedes: null
-superseded_by: null
+
+- option: Port forwarding + dynamic DNS
+  reason_rejected: Exposes services to the public internet; demands TLS termination + auth at every service; one misconfiguration leaks the homelab.
+- option: Self-hosted WireGuard
+  reason_rejected: Functional but adds an operational burden — key rotation, NAT traversal, mobile-client UX. Tailscale solves these for free at this scale.
+- option: Cloudflare Tunnel
+  reason_rejected: Routes traffic through Cloudflare; mismatches the self-hosting + privacy posture of the broader project.
+  decision_drivers:
+- Zero public ingress required (smaller attack surface)
+- Free tier is sufficient (≤3 users, ≤100 devices)
+- Cross-OS clients with workable UX (macOS, iOS, Linux)
+- Subnet routing available as a future upgrade if more LAN reach is wanted
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-008: Tailscale for off-network access to the homelab
@@ -581,6 +609,7 @@ Install Tailscale on each LXC that needs to be reachable from off-network. Start
 ---
 
 ---
+
 id: ADR-009
 title: Native LXC over Docker for homelab services on Proxmox
 status: accepted
@@ -588,19 +617,21 @@ date: 2026-05
 decision_question: What's the default deployment unit for self-hosted services on a Proxmox homelab — native LXC, Docker in LXC, or a dedicated Docker VM?
 decision_outcome: Default to one native unprivileged LXC per service; reach for Docker only when an app ships compose-only and porting is genuinely impractical.
 alternatives_considered:
-  - option: Docker in a privileged LXC (one shared LXC running many compose stacks)
-    reason_rejected: Punches through unprivileged-LXC isolation as a default; stacks abstractions Proxmox already provides (snapshots, backups, lifecycle, web UI); larger blast radius if any one service is compromised.
-  - option: Dedicated Docker VM
-    reason_rejected: VM overhead + duplicates Proxmox's container management; introduces a Docker-only operational pattern when most services have clean native package paths.
-  - option: Mix freely from the start
-    reason_rejected: Operational inconsistency; doubles the runbook surface; encourages "Docker by default" tutorial-following without justification.
-decision_drivers:
-  - Proxmox primitives (LXC, snapshots, vzdump, web UI) already cover the container-lifecycle needs that Docker would provide
-  - Smaller, isolatable blast radius per service
-  - Lower abstraction count = fewer places to debug at 11pm
-  - Docker-when-necessary policy preserves an escape hatch for compose-only apps
-supersedes: null
-superseded_by: null
+
+- option: Docker in a privileged LXC (one shared LXC running many compose stacks)
+  reason_rejected: Punches through unprivileged-LXC isolation as a default; stacks abstractions Proxmox already provides (snapshots, backups, lifecycle, web UI); larger blast radius if any one service is compromised.
+- option: Dedicated Docker VM
+  reason_rejected: VM overhead + duplicates Proxmox's container management; introduces a Docker-only operational pattern when most services have clean native package paths.
+- option: Mix freely from the start
+  reason_rejected: Operational inconsistency; doubles the runbook surface; encourages "Docker by default" tutorial-following without justification.
+  decision_drivers:
+- Proxmox primitives (LXC, snapshots, vzdump, web UI) already cover the container-lifecycle needs that Docker would provide
+- Smaller, isolatable blast radius per service
+- Lower abstraction count = fewer places to debug at 11pm
+- Docker-when-necessary policy preserves an escape hatch for compose-only apps
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-009: Native LXC over Docker for homelab services on Proxmox
@@ -644,6 +675,7 @@ Default to one native unprivileged LXC per service. Reach for Docker only when a
 ---
 
 ---
+
 id: ADR-010
 title: Claude Code on a dedicated dev LXC
 status: accepted
@@ -651,19 +683,21 @@ date: 2026-05
 decision_question: Where should Claude Code run when off-laptop work is wanted — on the Forgejo LXC, on a dedicated dev LXC, or on a Docker container?
 decision_outcome: Run Claude Code (Node CLI under tmux) in a dedicated unprivileged Debian LXC (CT 101), on the tailnet, separate from Forgejo.
 alternatives_considered:
-  - option: Co-tenant Claude Code on the Forgejo LXC (CT 100)
-    reason_rejected: Mixes long-running agent permissions with the git-data store; bad blast radius if the agent goes sideways; couples two unrelated lifecycles.
-  - option: Laptop-only (no off-laptop install)
-    reason_rejected: Long-running agents tie up the laptop; loses /loop and background-agent value when the laptop sleeps.
-  - option: Docker container on a Docker LXC
-    reason_rejected: Inconsistent with ADR-009 (native LXC over Docker for homelab services); adds an unnecessary abstraction.
-decision_drivers:
-  - Clean separation of concerns (git host vs dev agent vs HA)
-  - Consistent with ADR-009 (native LXC default)
-  - tmux-survivable SSH sessions over Tailscale make off-laptop work realistic
-  - Cheap to spin up an additional LXC on this host
-supersedes: null
-superseded_by: null
+
+- option: Co-tenant Claude Code on the Forgejo LXC (CT 100)
+  reason_rejected: Mixes long-running agent permissions with the git-data store; bad blast radius if the agent goes sideways; couples two unrelated lifecycles.
+- option: Laptop-only (no off-laptop install)
+  reason_rejected: Long-running agents tie up the laptop; loses /loop and background-agent value when the laptop sleeps.
+- option: Docker container on a Docker LXC
+  reason_rejected: Inconsistent with ADR-009 (native LXC over Docker for homelab services); adds an unnecessary abstraction.
+  decision_drivers:
+- Clean separation of concerns (git host vs dev agent vs HA)
+- Consistent with ADR-009 (native LXC default)
+- tmux-survivable SSH sessions over Tailscale make off-laptop work realistic
+- Cheap to spin up an additional LXC on this host
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-010: Claude Code on a dedicated dev LXC
@@ -707,6 +741,7 @@ Run Claude Code in a dedicated unprivileged Debian LXC (CT 101) — Node CLI und
 ---
 
 ---
+
 id: ADR-011
 title: Power resilience — targeted UPS, not whole-home battery
 status: accepted
@@ -714,19 +749,21 @@ date: 2026-06
 decision_question: How should the homelab survive grid disturbances — targeted rackmount UPS, grid-tied battery service, or owned whole-home battery?
 decision_outcome: Commit a single 2U rackmount UPS (CyberPower CP1500PFCRM2U) protecting the i5-11400 Proxmox host and core networking; defer whole-home battery and grid-tied battery service.
 alternatives_considered:
-  - option: Base Power Energy+Battery
-    reason_rejected: ~$695 install plus $19/mo membership, ~13.8¢/kWh, 36-month REP lock with $500 ETF, 10-year battery services agreement, equipment not owned, ~$350-450/yr premium at our usage, and startup counterparty risk.
-  - option: Owned whole-home battery (Anker SOLIX X1 / E10)
-    reason_rejected: ~$13-18k installed; ROI is poor with the federal storage tax credit expired 2026-01-01 and no solar planned to drive arbitrage.
-  - option: Portable Anker F3800 + smart inlet box
-    reason_rejected: Viable as a future fallback if outages outgrow the UPS, but premature today given the actual outage profile is short flickers.
-decision_drivers:
-  - The actual problem is short flickers, not confirmed long outages
-  - Equipment owned outright, no contract or REP lock
-  - Federal storage tax credit expired 2026-01-01; no solar planned (eliminates the arbitrage case for a large battery)
-  - Counterparty risk in grid-tied battery startups
-supersedes: null
-superseded_by: null
+
+- option: Base Power Energy+Battery
+  reason_rejected: ~$695 install plus $19/mo membership, ~13.8¢/kWh, 36-month REP lock with $500 ETF, 10-year battery services agreement, equipment not owned, ~$350-450/yr premium at our usage, and startup counterparty risk.
+- option: Owned whole-home battery (Anker SOLIX X1 / E10)
+  reason_rejected: ~$13-18k installed; ROI is poor with the federal storage tax credit expired 2026-01-01 and no solar planned to drive arbitrage.
+- option: Portable Anker F3800 + smart inlet box
+  reason_rejected: Viable as a future fallback if outages outgrow the UPS, but premature today given the actual outage profile is short flickers.
+  decision_drivers:
+- The actual problem is short flickers, not confirmed long outages
+- Equipment owned outright, no contract or REP lock
+- Federal storage tax credit expired 2026-01-01; no solar planned (eliminates the arbitrage case for a large battery)
+- Counterparty risk in grid-tied battery startups
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-011: Power resilience — targeted UPS, not whole-home battery
@@ -773,6 +810,7 @@ Outage frequency and duration get tracked informally over the next 1-2 months. I
 ---
 
 ---
+
 id: ADR-012
 title: Two-node Proxmox topology — recommended expansion path (not yet built)
 status: accepted
@@ -780,19 +818,21 @@ date: 2026-06
 decision_question: When the i5-11400 host's 16GB or single-node footprint becomes constraining, what's the right move — refresh the existing host, replace it, or add capacity another way?
 decision_outcome: When the trigger fires, add a second low-power mini-PC Proxmox node in a 10" office mini-rack alongside the i5-11400; do not refresh or replace the existing host. Per-service placement across the two nodes is a follow-on decision deferred until buildout.
 alternatives_considered:
-  - option: Bump i5-11400 to 64GB DDR4 (the openQuestion's Path B)
-    reason_rejected: Sinks money into legacy DDR4 in a dead-end LGA 1200 socket; DDR4 prices are rising as production winds down across Samsung / SK Hynix / Micron.
-  - option: Refresh CPU + board (LGA 1700 or 1851) and reuse peripherals (Path C)
-    reason_rejected: Disruptive — forces an HA migration during the refresh window — for modest ROI vs. simply adding a second node. Keeps single-node fragility.
-  - option: Sell the i5-11400 and replace with a single mini-PC (Path D)
-    reason_rejected: Loses the case/PSU/cooler reuse and the redundancy headroom that having two nodes provides. Form-factor win without the resilience win.
-decision_drivers:
-  - LGA 1200 socket is end-of-life; DDR4 is winding down
-  - Adding a node avoids downtime to migrate HA off the existing host
-  - Mini-rack form factor preserves desk space and gives the homelab a growth surface
-  - Two nodes preserves optionality (separate today, cluster later if desired)
-supersedes: null
-superseded_by: null
+
+- option: Bump i5-11400 to 64GB DDR4 (the openQuestion's Path B)
+  reason_rejected: Sinks money into legacy DDR4 in a dead-end LGA 1200 socket; DDR4 prices are rising as production winds down across Samsung / SK Hynix / Micron.
+- option: Refresh CPU + board (LGA 1700 or 1851) and reuse peripherals (Path C)
+  reason_rejected: Disruptive — forces an HA migration during the refresh window — for modest ROI vs. simply adding a second node. Keeps single-node fragility.
+- option: Sell the i5-11400 and replace with a single mini-PC (Path D)
+  reason_rejected: Loses the case/PSU/cooler reuse and the redundancy headroom that having two nodes provides. Form-factor win without the resilience win.
+  decision_drivers:
+- LGA 1200 socket is end-of-life; DDR4 is winding down
+- Adding a node avoids downtime to migrate HA off the existing host
+- Mini-rack form factor preserves desk space and gives the homelab a growth surface
+- Two nodes preserves optionality (separate today, cluster later if desired)
+  supersedes: null
+  superseded_by: null
+
 ---
 
 ## ADR-012: Two-node Proxmox topology — recommended expansion path (not yet built)
@@ -849,6 +889,104 @@ Storage / NAS, second-node backup target, and PoE switch options are deferred to
 1. **Bump i5-11400 to 64GB DDR4 (Path B):** Sinks money into legacy DDR4 in a socket with no upgrade path. DDR4 prices have roughly doubled since 2022 and the supply story is getting worse, not better.
 2. **Refresh CPU + board + RAM, keep peripherals (Path C):** Cheaper than it looks (~$500-700 with Noctua's free LGA 1700 mount kits and ~$400 of reusable parts), but it forces an HA migration during the refresh and leaves the homelab still single-node. Adding a node instead gets both the capacity and the redundancy headroom.
 3. **Sell the i5-11400 and replace with a single mini-PC (Path D):** The form-factor win is real, but it loses the case/PSU/cooler reuse value and stays single-node. If the mini-rack aesthetic is what's wanted, getting there by adding (rather than replacing) is the better path.
+
+---
+
+---
+
+id: ADR-013
+title: Physical network topology — service loop with office-side router/homelab
+status: accepted
+date: 2026-06
+decision_question: Where should network and homelab hardware physically live, given that every Cat 6 drop home-runs to a shallow (3-4" deep) laundry-room closet, but the homelab and primary WiFi belong in the office?
+decision_outcome: Keep the ISP gateway (bridged) and a wall-mounted PoE switch at the laundry-closet home-run point; put the router, homelab, and UPS in the office; join them with a two-cable service loop over existing office drops that carries the ADR-003 VLAN trunk. Distribute WiFi via PoE APs on the room drops rather than centralizing it in the office.
+alternatives_considered:
+
+- option: Everything in the closet
+  reason_rejected: The 3-4" depth won't fit a router, and closet-originated WiFi is poor.
+- option: Re-pull all drops to the office
+  reason_rejected: Expensive and invasive for no benefit; the home-run point can simply be uplinked.
+- option: Single-cable VLAN trunk carrying both WAN and LAN
+  reason_rejected: Viable fallback, not chosen — with two-plus office drops, physical WAN/LAN separation is simpler and more robust.
+- option: Centralize all WiFi in the office
+  reason_rejected: A single source leaves dead zones across a large house; the drops make distributed PoE APs the better answer.
+  decision_drivers:
+- Closet depth (3-4") physically excludes a router and most active gear
+- All Cat 6 drops home-run to the closet, anchoring the Layer-2 switch there
+- Homelab (Proxmox, UPS) and the primary work area are already in the office
+- Whole-house WiFi for a large busy house needs distributed APs, not a single point
+- Must carry the ADR-003 VLAN scheme without compromise
+  supersedes: null
+  superseded_by: null
+
+---
+
+## ADR-013: Physical network topology — service loop with office-side router/homelab
+
+**Date:** 2026-06  
+**Status:** Accepted  
+**Deciders:** Kendrick
+
+### Context
+
+The internet service enters at a shallow network closet in the laundry room — roughly 18"×24" of face but only 3-4" deep, which is the binding constraint. Every Cat 6 drop in the house home-runs to that closet, and the ISP-provided combo gateway lives there. The homelab (Proxmox host, plus the UPS committed under [ADR-011](#adr-011)) and the primary work area are in the office. The closet depth physically excludes a router — the GL.iNet Flint is deeper than the cavity — and makes the closet a poor place to originate WiFi. Re-pulling every drop to the office is not practical. [ADR-003](#adr-003) settles the logical VLAN segmentation; this ADR settles where the hardware that carries it physically lives.
+
+### Decision
+
+Split the network across two locations joined by a service loop (router-on-a-stick):
+
+```
+[ISP gateway · closet, bridged]
+        │  Drop A  (WAN)
+        ▼
+[Flint router · office] ── homelab (Proxmox) + UPS
+        │  Drop B  (LAN, VLAN trunk 1/10/20/30)
+        ▼
+[PoE switch · laundry wall, beside the closet]
+        │
+   ┌────┴───────────────── … all room drops
+   ▼                    ▼
+room jacks        PoE APs (distributed)
+```
+
+- **Closet (home-run point):** ISP gateway set to **bridge/passthrough mode** (its routing and WiFi disabled), plus a PoE switch **wall-mounted on the laundry-room wall beside the closet** — not inside the shallow cavity, which can neither take the switch's ~4" depth nor ventilate it. The switch is the Layer-2 star for every room drop and the PoE source for access points.
+- **Office:** the Flint router (all routing, firewall, VLAN tagging, and office-zone WiFi), the Proxmox host, and the UPS.
+- **Two existing office drops form the loop:** Drop A carries gateway→router (WAN); Drop B carries router→switch (LAN) as a VLAN trunk (1/10/20/30 per [ADR-003](#adr-003)). Same-VLAN room-to-room traffic switches locally in the closet; only routed and internet traffic traverses the loop, so there is no meaningful performance cost.
+- **WiFi is distributed, not centralized:** access points sit at central ceiling/wall locations, powered over the room drops from the closet PoE switch. The office is one strong node; additional APs are a WALK-phase add as coverage demands.
+
+If the ISP gateway exposes no true bridge mode (common on fiber ONT-combos), use **IP passthrough / DMZ** to the Flint's WAN as the functional equivalent, and disable the gateway's WiFi regardless.
+
+### Consequences
+
+**Positive:**
+
+- Router, homelab, and UPS live where they're managed and serviced; nothing load-bearing is trapped in a cramped, poorly ventilated cavity.
+- The depth constraint is sidestepped entirely by wall-mounting the switch beside the closet.
+- Bridging the gateway avoids double-NAT, keeping [ADR-008](#adr-008) Tailscale and inter-VLAN routing clean.
+- Distributed PoE APs avoid the dead zones a single office WiFi source would create.
+- No cable re-pull; uses drops already in place.
+
+**Negative:**
+
+- Consumes two office drops for the loop, reducing wired ports in the office (mitigated by a small office switch hung off Drop B if needed).
+- The closet switch is a single point for all wired connectivity — inherent to any home-run topology.
+- Bridging an ISP gateway is occasionally fiddly; some units only offer IP passthrough.
+
+**Neutral:**
+
+- The closet stays the structured-wiring patch point; only the active switch moves to the adjacent wall.
+
+### Alternatives Considered
+
+1. **Everything in the closet:** Rejected — the 3-4" depth won't fit a router and closet-originated WiFi is poor.
+2. **Re-pull all drops to the office:** Rejected — expensive and invasive for no benefit; the home-run point can simply be uplinked.
+3. **Single-cable VLAN trunk carrying both WAN and LAN:** Viable fallback, not chosen — with two-plus office drops, physical WAN/LAN separation is simpler and more robust.
+4. **Centralize all WiFi in the office:** Rejected — a single source leaves dead zones across a large house; the drops make distributed PoE APs the better answer.
+
+### Related
+
+- [ADR-003](#adr-003) — defines the VLAN segmentation this topology physically carries (logical layer; ADR-013 is the physical layer).
+- [ADR-011](#adr-011) — the UPS protecting the office-side gear.
 
 ```
 
