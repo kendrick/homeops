@@ -20,38 +20,38 @@ This project uses a two-tier working memory at `_working-memory/`.
 
 ### Read on demand:
 
-| File                   | Read when...                                                                                                      |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `projectOverview.md`   | Starting a new feature or onboarding                                                                              |
-| `decisionLog.md`       | Quick chronological index of decisions (auto-generated from `docs/decisions.md` frontmatter)        |
-| `networkContracts.md`  | Touching entity naming, VLAN/IP assignments, or device-protocol selection                                          |
-| `conventions.md`       | Writing new code/config or reviewing patterns (PolicyRule rows with required/recommended/advisory)                |
-| `openQuestions.md`     | Encountering ambiguity — check here before guessing                                                               |
-| `antipatterns.md`      | BEFORE suggesting a refactor, library swap, or architectural change — check whether it's already been rejected    |
+| File                  | Read when...                                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `projectOverview.md`  | Starting a new feature or onboarding                                                                           |
+| `decisionLog.md`      | Quick chronological index of decisions (auto-generated from `docs/decisions.md` frontmatter)                   |
+| `networkContracts.md` | Touching entity naming, VLAN/IP assignments, or device-protocol selection                                      |
+| `conventions.md`      | Writing new code/config or reviewing patterns (PolicyRule rows with required/recommended/advisory)             |
+| `openQuestions.md`    | Encountering ambiguity — check here before guessing                                                            |
+| `antipatterns.md`     | BEFORE suggesting a refactor, library swap, or architectural change — check whether it's already been rejected |
 
 ### Where new content goes (placement table)
 
 Before creating any new file, consult this table. If the file's purpose doesn't match a row, ask before writing rather than guessing a location. This table is the primary defense against subdirectories drifting into misnomers (as `home-assistant/` did before its 2026-05 restructure).
 
-| New content                                                  | Goes in                                                                                                                          |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| Architectural decision (real choice, alternatives)           | `docs/decisions.md` — append a new ADR with slim frontmatter; the `Stop` hook regenerates `_working-memory/decisionLog.md`       |
-| Project-wide narrative doc                                   | `docs/`                                                                                                                          |
-| Phase reading guide                                          | `docs/phases/`                                                                                                                   |
-| Device inventory entry                                       | `docs/inventory.md`                                                                                                              |
-| HA config (YAML automations, dashboards, custom components)  | `home-assistant/`                                                                                                                |
-| HA-specific troubleshooting                                  | `home-assistant/docs/troubleshooting.md`                                                                                         |
-| Proxmox / Forgejo / Tailscale / dev-LXC notes or scripts     | `homelab/`                                                                                                                       |
-| Convention / PolicyRule                                      | `_working-memory/conventions.md`                                                                                                 |
-| Unresolved question                                          | `_working-memory/openQuestions.md`                                                                                               |
-| Rejected pattern with reason                                 | `_working-memory/antipatterns.md`                                                                                                |
-| Network plan / protocol assignments / entity-naming grammar  | `_working-memory/networkContracts.md`                                                                                            |
-| Auto-fire script                                             | `scripts/`                                                                                                                       |
-| Git hook                                                     | `scripts/git-hooks/`                                                                                                             |
-| Cross-session memory (user profile, project state, feedback) | `~/.claude/projects/-Users-karnett-repos-homeops/memory/` (NOT in repo)                                                          |
-| Session-ritual skill (slash command for a recurring workflow) | `.claude/skills/<name>/SKILL.md` (e.g. `/start-issue` lives at `.claude/skills/start-issue/SKILL.md`)                            |
-| Raw, PII-rich planning / household specifics / brainstorming | Obsidian vault `_raw/` dir; path configured in `.working-memoryrc` and resolved by `scripts/lib/vault-config.sh` (NOT in this repo) |
-| Anything sensitive (real names, real IPs, lock codes, photos) | NOT in this repo — Obsidian vault `_raw/` (above) or a private companion repo                                                  |
+| New content                                                   | Goes in                                                                                                                             |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Architectural decision (real choice, alternatives)            | `docs/decisions.md` — append a new ADR with slim frontmatter; the `Stop` hook regenerates `_working-memory/decisionLog.md`          |
+| Project-wide narrative doc                                    | `docs/`                                                                                                                             |
+| Phase reading guide                                           | `docs/phases/`                                                                                                                      |
+| Device inventory entry                                        | `docs/inventory.md`                                                                                                                 |
+| HA config (YAML automations, dashboards, custom components)   | `home-assistant/`                                                                                                                   |
+| HA-specific troubleshooting                                   | `home-assistant/docs/troubleshooting.md`                                                                                            |
+| Proxmox / Forgejo / Tailscale / dev-LXC notes or scripts      | `homelab/`                                                                                                                          |
+| Convention / PolicyRule                                       | `_working-memory/conventions.md`                                                                                                    |
+| Unresolved question                                           | `_working-memory/openQuestions.md`                                                                                                  |
+| Rejected pattern with reason                                  | `_working-memory/antipatterns.md`                                                                                                   |
+| Network plan / protocol assignments / entity-naming grammar   | `_working-memory/networkContracts.md`                                                                                               |
+| Auto-fire script                                              | `scripts/`                                                                                                                          |
+| Git hook                                                      | `scripts/git-hooks/`                                                                                                                |
+| Cross-session memory (user profile, project state, feedback)  | `~/.claude/projects/-Users-k-arnett-repos-homeops/memory/` (NOT in repo)                                                             |
+| Session-ritual skill (slash command for a recurring workflow) | `.claude/skills/<name>/SKILL.md` (e.g. `/start-issue` lives at `.claude/skills/start-issue/SKILL.md`)                               |
+| Raw, PII-rich planning / household specifics / brainstorming  | Obsidian vault `_raw/` dir; path configured in `.env` and resolved by `scripts/lib/vault-config.sh` (NOT in this repo) |
+| Anything sensitive (real names, real IPs, lock codes, photos) | NOT in this repo — Obsidian vault `_raw/` (above) or a private companion repo                                                       |
 
 ### Updating working memory:
 
