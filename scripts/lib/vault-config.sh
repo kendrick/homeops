@@ -22,10 +22,18 @@
 _HOMEOPS_ENV="${REPO_ROOT:-.}/.env"
 
 _read_env_key() {
-  local k="$1"
+  local k="$1" v=""
   if [ -f "$_HOMEOPS_ENV" ]; then
-    grep -E "^${k}=" "$_HOMEOPS_ENV" 2>/dev/null | head -1 | cut -d= -f2- | sed -e 's/^"//;s/"$//;s/^'"'"'//;s/'"'"'$//'
+    v=$(grep -E "^${k}=" "$_HOMEOPS_ENV" 2>/dev/null | head -1 | cut -d= -f2- | sed -e 's/^"//;s/"$//;s/^'"'"'//;s/'"'"'$//')
   fi
+  # Leading ~ only, so one .env survives machines whose home dirs differ.
+  # Never substitute globally: the iCloud vault path carries literal tildes
+  # mid-string (iCloud~md~obsidian) and a global swap would shred it.
+  case "$v" in
+    "~") v="$HOME" ;;
+    "~/"*) v="$HOME/${v#\~/}" ;;
+  esac
+  printf '%s' "$v"
   return 0
 }
 
