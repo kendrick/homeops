@@ -3,8 +3,9 @@
 # vault mirror so it's browseable from phone. Idempotent. Run on demand or
 # auto-fired by the Stop hook in post-session-discipline-check.sh.
 #
-# Vault paths come from scripts/lib/vault-config.sh (which reads .working-memoryrc
-# with defaults). Mirror manifest is inline below — keep aligned with
+# Vault paths come from scripts/lib/vault-config.sh, which reads .env and
+# applies no defaults: if the keys are missing, this script no-ops rather than
+# guessing a path. Mirror manifest is inline below — keep aligned with
 # sync-from-vault.sh.
 
 set -eu
