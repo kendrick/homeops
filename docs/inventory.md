@@ -50,16 +50,16 @@ Track all smart home devices here. Update as you purchase and install.
 - **Make/Model:** TP-Link TL-SG108PE
 - **Purchase Date:** [TBD]
 - **Purchase Price:** ~$70
-- **Location:** Network cabinet (fiber entry point)
-- **Notes:** 8-port PoE+, manages VLANs
+- **Location:** Laundry-room wall, beside the network closet (service entry point). Wall-mounted rather than inside the closet, since the cavity is only 3-4" deep and can't ventilate the switch. See [ADR-013](decisions.md#adr-013).
+- **Notes:** 8-port PoE+, manages VLANs. Layer-2 star for every room drop and the PoE source for access points.
 
 ### Router
 
 - **Make/Model:** [TBD - GL.iNet Flint 2 recommended]
 - **Purchase Date:** [TBD]
 - **Purchase Price:** ~$180
-- **Location:** Network cabinet
-- **Notes:** Handles VLAN segmentation, firewall rules
+- **Location:** Office, alongside the Proxmox host and UPS. Reaches the closet over the two-drop service loop per [ADR-013](decisions.md#adr-013).
+- **Notes:** Handles VLAN segmentation, firewall rules, and office-zone WiFi.
 
 ### UPS (Homelab)
 
