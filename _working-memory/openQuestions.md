@@ -13,6 +13,8 @@
 - **Private companion repo for real data.** Should `kendrick/homeops-private` exist for actual entity names, real IPs, lock codes, photos? Standard HA-community pattern. Decide before any real device data needs persistence.
 - **Outage frequency tracking — trigger to revisit whole-home backup.** Track grid events informally over the next 1-2 months (rough count + duration). Revisit ADR-011 if either of these fires: more than one outage per month sustained longer than 4 hours, or cumulative downtime in any 90-day window exceeds 12 hours. Otherwise the UPS-only posture stands; the F3800-class portable becomes the next candidate, not whole-home battery.
 
+- **Whether the many-ADRs-in-one-file convention survives contact with formatters.** `docs/decisions.md` stacks 13 YAML frontmatter blocks, but only the first `---` in a file is frontmatter to any Markdown tool; every later fence reads as a horizontal rule. That is what let the Obsidian Linter insert a blank line after each one and break the frontmatter `regen-decision-log.sh` parses. Folder-ignoring the mirror fixes today's symptom, but the convention stays fragile against any future formatter, editor, or contributor. The alternative is one file per ADR under `docs/decisions/`, which costs the single-file grep that makes `alternatives_considered` easy to search. Decide if it bites a second time.
+
 ## Public release
 
 - **When to flip `kendrick/homeops` to public after first scrubbed push?** Options: immediately (after Phase H verification); wait a few days to see if anything rots; wait until WALK phase has substantive content. Default: immediately, since the cleanup discipline is the value.

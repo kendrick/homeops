@@ -110,3 +110,12 @@
 - Listing long-lead-time hardware in `activeContext.md` when the use is more than 1-2 sessions out.
 - "Order now because shipping takes a few days" reasoning without checking how many sessions away the actual need is.
 - When proposing orders, anchor on session distance (not calendar shipping time). Recommend ordering only when the maintainer is ~1-2 sessions from needing the gear (e.g., after CRAWL-07 completes, order for CRAWL-09 / 10).
+## 2026-08-21 — Don't let a Markdown formatter near `docs/decisions.md`
+
+**Tried:** Obsidian's Linter plugin ran with `lintOnSave` enabled and an empty `foldersToIgnore`, so it formatted the vault's `30.03 Homelab/homeops/` mirror on every save. The reformatted `decisions.md` then synced back into the repo and was committed in 9f709aa.
+
+**What broke:** All 13 ADR frontmatter blocks came back with a blank line between the `---` fence and `id:`, and with `alternatives_considered` and `decision_drivers` flattened out of their nesting. ADR-013's topology diagram lost its opening code fence and gained a stray one, so the tail of the file rendered as prose. Cleaned up in f2b240f.
+
+**Why we backed out:** Only the first `---` in a file is frontmatter. This repo stacks many YAML blocks in one file, so every fence after the first reads as a horizontal rule to any Markdown tool. The Linter's `empty-line-around-horizontal-rules` rule then does exactly what it says, and `empty-line-around-code-fences` accounts for the diagram. Nothing here is a bug in the Linter — the file violates an assumption every formatter makes. The damage is quiet: `regen-decision-log.sh` still runs, just with less to parse, and nothing fails loudly.
+
+**Don't suggest:** enabling any format-on-save, Prettier, or Markdown linter over the vault mirror or over `docs/decisions.md`. The fix is folder-scoped exclusion (Linter settings → Folders to ignore), not disabling individual rules — one generated folder isn't worth giving up rules across the whole vault, and any other rule could mangle it later. If the file needs formatting, the ADR-per-file split in `openQuestions.md` is the real answer, not a tuned linter.
