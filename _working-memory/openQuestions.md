@@ -18,7 +18,6 @@
 
 ## Public release
 
-- **When to flip `kendrick/homeops` to public after first scrubbed push?** Options: immediately (after Phase H verification); wait a few days to see if anything rots; wait until WALK phase has substantive content. Default: immediately, since the cleanup discipline is the value.
 - **`/schedule` quarterly audit setup.** Interactive setup pending (Claude Code session, `/schedule` skill). Needs to be done once and run via Claude Code's scheduled-routines.
 
 ## Hosting platform

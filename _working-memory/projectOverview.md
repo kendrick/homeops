@@ -58,7 +58,9 @@ Acceptance Factor).
   enter tracked files. `.audit-pii-patterns` is gitignored; `scripts/git-hooks/pre-push`
   blocks pushes that match. After any `git init`, re-run
   `git config core.hooksPath scripts/git-hooks` (the hooksPath setting lives
-  in `.git/config` and gets wiped by init).
+  in `.git/config` and gets wiped by init). The gate needs both halves: an
+  empty or missing `.audit-pii-patterns` makes the sweep pass on nothing
+  rather than fail.
 - No `git commit` by automated agents. Stage, propose message, pause for the
   maintainer.
 - Conventions in `_working-memory/conventions.md` are policy. `required` rules

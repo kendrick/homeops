@@ -119,3 +119,15 @@
 **Why we backed out:** Only the first `---` in a file is frontmatter. This repo stacks many YAML blocks in one file, so every fence after the first reads as a horizontal rule to any Markdown tool. The Linter's `empty-line-around-horizontal-rules` rule then does exactly what it says, and `empty-line-around-code-fences` accounts for the diagram. Nothing here is a bug in the Linter — the file violates an assumption every formatter makes. The damage is quiet: `regen-decision-log.sh` still runs, just with less to parse, and nothing fails loudly.
 
 **Don't suggest:** enabling any format-on-save, Prettier, or Markdown linter over the vault mirror or over `docs/decisions.md`. The fix is folder-scoped exclusion (Linter settings → Folders to ignore), not disabling individual rules — one generated folder isn't worth giving up rules across the whole vault, and any other rule could mangle it later. If the file needs formatting, the ADR-per-file split in `openQuestions.md` is the real answer, not a tuned linter.
+
+---
+
+## 2026-09-15 — Don't read a clean `audit-pii.sh` as evidence the tree is clean
+
+**Tried:** The pre-push gate was treated as armed because `scripts/git-hooks/pre-push` was wired and `audit-pii.sh` exited 0 on every run.
+
+**What broke:** `.audit-pii-patterns` had zero active pattern lines. The script reads the file, builds an empty pattern list, prints `✓ audit-pii: no patterns configured (nothing to check)`, and exits 0, the same exit code as a real sweep over real patterns. Surfaced on 2026-09-15 while documenting fresh-clone setup for the README; every push since the repo went public had been gated on nothing.
+
+**Why we backed out:** The pattern file is gitignored by design, so it never arrives with a clone and starts empty. The script's header says it will refuse to run until `.audit-pii-patterns` exists. It does refuse on a missing file, but an existing file with no uncommented lines passes instead. Missing is loud; empty is silent.
+
+**Don't suggest:** treating a green `audit-pii.sh` or a successful push as evidence the PII gate is working. Check that `grep -vcE '^[[:space:]]*(#|$)' .audit-pii-patterns` returns a non-zero count first. Same failure shape as the 2026-05-23 `core.hooksPath` entry: present, wired, inert.
